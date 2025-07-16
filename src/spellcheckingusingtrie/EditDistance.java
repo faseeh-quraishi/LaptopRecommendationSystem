@@ -1,4 +1,4 @@
-package spellcheckingusingtries;
+package spellcheckingusingtrie;
 
 /**
  * This class provides a static method to calculate the Levenshtein Distance (edit distance)

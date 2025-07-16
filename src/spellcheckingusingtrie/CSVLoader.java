@@ -1,4 +1,4 @@
-package spellcheckingusingtries;
+package spellcheckingusingtrie;
 
 import java.io.*;
 import java.util.*;
