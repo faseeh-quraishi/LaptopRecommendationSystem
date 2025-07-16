@@ -1,0 +1,58 @@
+package spellcheckingusingtries;
+
+import java.io.*;
+import java.util.*;
+
+public class CSVLoader {
+
+    // Load vocabulary words from a CSV file and return them as a list
+    public static List<String> loadVocabularyFromCSV(String csvFilePath) {
+        Set<String> uniqueWordsSet = new HashSet<>(); // To store unique cleaned words
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(csvFilePath))) {
+            String line;
+
+            bufferedReader.readLine(); // Skip the header row
+
+            // Read the CSV file line by line
+            while ((line = bufferedReader.readLine()) != null) {
+                // Split line into columns using comma as delimiter
+                String[] columns = line.split(",", -1); // -1 ensures trailing empty columns are preserved
+
+                // Process each column value in the row
+                for (String columnText : columns) {
+                    // Convert to lowercase and replace non-alphanumeric characters (except space) with space
+                    String cleanedText = columnText.toLowerCase().replaceAll("[^a-z0-9 ]", " ");
+
+                    // Split cleaned text into individual words based on whitespace
+                    String[] words = cleanedText.split("\\s+");
+
+                    // Clean and insert each word into the set
+                    for (String rawWord : words) {
+                        if (!rawWord.isEmpty()) {
+                            String cleanedWord = rawWord.trim(); // Remove leading/trailing spaces
+
+                            // Remove unwanted suffixes
+                            if (cleanedWord.endsWith("ca")) {
+                                cleanedWord = cleanedWord.substring(0, cleanedWord.length() - 2);
+                            } else if (cleanedWord.endsWith("â„¢")) {
+                                cleanedWord = cleanedWord.substring(0, cleanedWord.length() - 2);
+                            }
+
+                            // Add non-empty cleaned word to the set
+                            if (!cleanedWord.isEmpty()) {
+                                uniqueWordsSet.add(cleanedWord);
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (IOException fileReadException) {
+            System.out.println("Error reading CSV file: " + fileReadException.getMessage());
+        }
+
+        // Convert the set to a list and return
+        return new ArrayList<>(uniqueWordsSet);
+    }
+}

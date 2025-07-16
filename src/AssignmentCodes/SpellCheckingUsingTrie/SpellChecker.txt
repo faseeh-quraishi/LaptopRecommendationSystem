@@ -1,0 +1,56 @@
+package spellcheckingusingtries;
+
+import java.util.*;
+
+public class SpellChecker {
+    private final Trie vocabularyTrie; // Trie to store the vocabulary words
+
+    // Constructor: Build the Trie with all words from the provided vocabulary list
+    public SpellChecker(List<String> vocabularyWords) {
+        vocabularyTrie = new Trie();
+        for (String word : vocabularyWords) {
+            vocabularyTrie.insert(word);
+        }
+    }
+
+    // Check if the given word is spelled correctly (i.e., exists in the Trie)
+    public boolean isCorrect(String wordToCheck) {
+        return vocabularyTrie.search(wordToCheck);
+    }
+
+    // Suggest alternative words within the allowed edit distance threshold
+    public List<String> suggest(String incorrectWord, int maxEditDistance) {
+        List<String> alternativeSuggestions = new ArrayList<>();
+
+        // Compare the input word with each word in the vocabulary
+        for (String vocabWord : vocabularyTrie.getAllWords()) {
+            int distance = EditDistance.calculateEditDistance(incorrectWord.toLowerCase(), vocabWord);
+
+            // If edit distance is within allowed range, add to suggestions
+            if (distance <= maxEditDistance) {
+                alternativeSuggestions.add(vocabWord);
+            }
+        }
+
+        return alternativeSuggestions;
+    }
+
+    // Check the word and display result with suggestions (if incorrect)
+    public void checkWord(String wordToCheck) {
+        if (isCorrect(wordToCheck)) {
+            System.out.println("✅ The word '" + wordToCheck + "' is spelled correctly.");
+        } else {
+            System.out.println("❌ The word '" + wordToCheck + "' is not in the vocabulary.");
+            List<String> suggestions = suggest(wordToCheck, 2); // Use edit distance of 2 for suggestions
+
+            if (suggestions.isEmpty()) {
+                System.out.println("No suggestions found.");
+            } else {
+                System.out.println("Did you mean:");
+                for (String suggestion : suggestions) {
+                    System.out.println("  • " + suggestion);
+                }
+            }
+        }
+    }
+}

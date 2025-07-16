@@ -1,0 +1,70 @@
+package spellcheckingusingtries;
+
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // Define the path to the CSV file
+        String csvFilePath = "all_laptops_data.csv";
+        List<String> vocabularyList = null;
+
+        // Load vocabulary from the CSV file
+        try {
+            vocabularyList = CSVLoader.loadVocabularyFromCSV(csvFilePath);
+
+            // Check if vocabulary is empty
+            if (vocabularyList.isEmpty()) {
+                System.out.println("⚠️ The vocabulary list is empty. Please check the CSV file content.");
+                return;
+            }
+        } catch (Exception exception) {
+            System.out.println("❌ Failed to load vocabulary from the file: " + exception.getMessage());
+            return;
+        }
+
+        // Initialize the spell checker with the vocabulary
+        SpellChecker spellChecker = new SpellChecker(vocabularyList);
+        Scanner userInputScanner = new Scanner(System.in);
+
+        // User instructions
+        System.out.println("\n📚 Spell Checker is Ready!");
+        System.out.println("👉 Type a word to check its spelling.");
+        System.out.println("🔚 Type 'exit' to quit the program.");
+
+        // Interactive loop for user input
+        while (true) {
+            System.out.print("\n🔤 Enter a word: ");
+            String userInput;
+
+            // Try reading user input
+            try {
+                userInput = userInputScanner.nextLine().trim().toLowerCase();
+            } catch (Exception inputError) {
+                System.out.println("❌ Error reading input. Please try again.");
+                continue;
+            }
+
+            // Exit condition
+            if (userInput.equals("exit")) {
+                System.out.println("👋 Exiting Spell Checker. Goodbye!");
+                break;
+            }
+
+            // Skip empty input
+            if (userInput.isEmpty()) {
+                System.out.println("⚠️ Please enter a non-empty word.");
+                continue;
+            }
+
+            // Perform spell check
+            try {
+                spellChecker.checkWord(userInput);
+            } catch (Exception checkError) {
+                System.out.println("❌ Error while checking the word: " + checkError.getMessage());
+            }
+        }
+
+        // Close the scanner to release system resources
+        userInputScanner.close();
+    }
+}
