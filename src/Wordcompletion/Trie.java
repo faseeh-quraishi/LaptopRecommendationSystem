@@ -1,4 +1,4 @@
-package AssignmentCodes.WordCompletionTries;
+package Wordcompletion;
 
 import java.util.ArrayList;
 import java.util.List;
