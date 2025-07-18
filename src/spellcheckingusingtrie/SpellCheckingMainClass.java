@@ -36,29 +36,29 @@ public class SpellCheckingMainClass {
         List<String> outputMessages = new ArrayList<>();
 
         if (spellChecker == null) {
-            outputMessages.add("❌ SpellChecker not initialized due to earlier error.");
+            outputMessages.add("error: SpellChecker not initialized due to earlier error.");
             return outputMessages;
         }
 
         word = word.trim().toLowerCase();
 
         if (word.isEmpty()) {
-            outputMessages.add("⚠️ Please provide a non-empty word.");
+            outputMessages.add("error: Please provide a non-empty word.");
             return outputMessages;
         }
 
         if (spellChecker.isCorrect(word)) {
-            outputMessages.add("✅ The word '" + word + "' is spelled correctly.");
+//            outputMessages.add("✅ The word '" + word + "' is spelled correctly.");
         } else {
-            outputMessages.add("❌ The word '" + word + "' is not in the vocabulary.");
+//            outputMessages.add("❌ The word '" + word + "' is not in the vocabulary.");
 
             List<String> suggestions = spellChecker.suggest(word, 2);
             if (suggestions.isEmpty()) {
-                outputMessages.add("No suggestions found.");
+                outputMessages.add("error: No suggestions found.");
             } else {
-                outputMessages.add("Did you mean:");
+//                outputMessages.add("");
                 for (int i = 0; i < Math.min(5, suggestions.size()); i++) {
-                    outputMessages.add("  • " + suggestions.get(i));
+                    outputMessages.add(suggestions.get(i));
                 }
             }
         }
