@@ -1,11 +1,15 @@
 package laptoprecommendation;
 
-import java.util.List;
-import java.util.Map;
-
 import SearchFrequency.SearchFreq;
 import spellcheckingusingtrie.SpellCheckingMainClass;
 import Wordcompletion.wordcompletionTries;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import spellcheckingusingtrie.SpellCheckingMainClass;
+import Wordcompletion.wordcompletionTries;
+import Wordcompletion.Trie;
+import AssignmentCodes.InvertedIndexCSV;
 
 public class Features {
 
@@ -13,17 +17,11 @@ public class Features {
     private static final SearchFreq sf = new SearchFreq();
 
     public static void main(String[] args) {
-//        addSearchedWordCount("java");
-//        addSearchedWordCount("python");
-//        addSearchedWordCount("java");
-//        addSearchedWordCount("kotlin");
-//        addSearchedWordCount("go");
-//        addSearchedWordCount("java");
-//
-//        System.out.println("Top 5 searched words:");
-//        for (Map.Entry<String, Integer> entry : getTop5SearchedWords()) {
-//            System.out.println(entry.getKey() + ": " + entry.getValue());
-//        }
+        Set<Integer> suggestions = InvertedIndexCSV.InvertedIndexing("laptop", DATA_FILE);
+        System.out.println("🔍 Word Completion Suggestions:");
+        for (int suggestion : suggestions) {
+            System.out.println(suggestion);
+        }
     }
 
     // Correct return type based on SearchFreq
@@ -44,4 +42,15 @@ public class Features {
         SpellCheckingMainClass spc = new SpellCheckingMainClass(DATA_FILE);
         return spc.SpellCheckingUsingTrie(word);
     }
+
+    public static List<String> SearchProduct(String word) {
+        //USE THE FOLLOWING FUNCTION TO FETCH THE CSV INDEXES.
+        // For Jill
+        // InvertedIndexCSV.InvertedIndexing(word, DATA_FILE)
+        List<Integer> result = new ArrayList<>(InvertedIndexCSV.InvertedIndexing(word, DATA_FILE));
+        return result.stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+    }
+
 }

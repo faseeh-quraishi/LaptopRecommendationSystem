@@ -57,6 +57,22 @@ public class WebInterface {
                         }
                         break;
 
+                    case "SearchProduct":
+                        try {
+                            String spellings = jsonObject.get("spelling").getAsString();
+                            List<String> suggestions = Features.SearchProduct(spellings);
+                            // Create a JSON array from suggestions
+                            JsonArray resultArray = new JsonArray();
+                            for (String suggestion : suggestions) {
+                                resultArray.add(suggestion);
+                            }
+                            returnJsonObject = new JsonObject();
+                            returnJsonObject.add("result", resultArray);
+                        } catch (Exception e) {
+                            sendError(exchange, 500, "Internal server error in spellCheck");
+                            return;
+                        }
+                        break;
                     default:
                         sendError(exchange, 400, "Invalid method");
                         break;

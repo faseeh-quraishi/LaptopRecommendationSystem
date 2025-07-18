@@ -1,3 +1,4 @@
+package AssignmentCodes;
 import java.io.*;
 import java.util.*;
 
@@ -47,7 +48,8 @@ public class InvertedIndexCSV {
         TrieNode current = root;
         for (char ch : word.toLowerCase().toCharArray()) {
             current = current.children.get(ch);
-            if (current == null) return Collections.emptySet();
+            if (current == null)
+                return Collections.emptySet();
         }
         return current.isEndOfWord ? current.rows : Collections.emptySet();
     }
@@ -55,20 +57,16 @@ public class InvertedIndexCSV {
     // Main method
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        String[] fileName = {"Asus.csv", "products.csv"};
+        String[] fileName = { "all_laptops_data.csv" };
         try {
-            
             System.out.print("Enter a word to search: ");
             String query = scanner.nextLine();
-                        
             for(String file : fileName) {
                 //Reseting the TrieNode for next file
-                root = new TrieNode(); 
+                root = new TrieNode();
                 System.out.println("Building index from " + file +" ...");
                 buildIndex(file);
-    
                 Set<Integer> result = search(query);
-    
                 if (result.isEmpty()) {
                     System.out.println("Word not found in any row.");
                 } else {
@@ -83,6 +81,19 @@ public class InvertedIndexCSV {
             System.out.println("Error: " + e.getMessage());
         } finally {
             scanner.close();
+        }
+    }
+
+    public static Set<Integer> InvertedIndexing(String word, String fileName) {
+        try {
+            root = new TrieNode();
+            System.out.println("Building index from " + fileName + " ...");
+            buildIndex(fileName);
+            Set<Integer> result = search(word);
+            return result;
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+            return Collections.emptySet();
         }
     }
 }
