@@ -31,19 +31,27 @@ public class wordcompletionTries {
     }
 
     public List<String> wordCompletion(String prefix) {
-        return trie.searchPrefix(prefix);
+        List<String> results = trie.searchPrefix(prefix);
+        if (results.isEmpty()) {
+            System.out.println("No matching words found for prefix: " + prefix);
+        }
+        return results;
     }
 
+    // Uncomment this block for testing
 //    public static void main(String[] args) {
 //        String filePath = "all_laptops_data.csv";
 //        wordcompletionTries wc = new wordcompletionTries(filePath);
 //
-//        // Example usage: you can call this method with any prefix
-//        List<String> completions = wc.wordCompletion("");
+//        List<String> completions = wc.wordCompletion("xyz");
 //
-//        // Display the results
-//        for (String word : completions) {
-//            System.out.println(word);
+//        if (!completions.isEmpty()) {
+//            for (String word : completions) {
+//                System.out.println(word);
+//            }
+//        } else {
+//            System.out.println("No suggestions found.");
 //        }
 //    }
-}
+
+} // ✅ This closing brace was missing before!

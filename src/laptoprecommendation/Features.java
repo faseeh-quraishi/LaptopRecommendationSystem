@@ -10,7 +10,7 @@ public class Features {
     private static final String DATA_FILE = "all_laptops_data.csv";
 
     public static void main(String[] args) {
-        List<String> suggestions = WordCompletion("hp");
+        List<String> suggestions = WordCompletion("lap");
 
         System.out.println("🔍 Word Completion Suggestions:");
         for (String suggestion : suggestions) {
