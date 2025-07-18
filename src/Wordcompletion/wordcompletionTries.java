@@ -33,7 +33,7 @@ public class wordcompletionTries {
     public List<String> wordCompletion(String prefix) {
         List<String> results = trie.searchPrefix(prefix);
         if (results.isEmpty()) {
-            System.out.println("No matching words found for prefix: " + prefix);
+        	 System.out.println("error: No matching words found for prefix: " + prefix + "");
         }
         return results;
     }
