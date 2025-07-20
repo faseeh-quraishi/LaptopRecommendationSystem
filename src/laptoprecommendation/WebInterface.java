@@ -1,6 +1,7 @@
 package laptoprecommendation;
 
 import laptoprecommendation.Features;
+import pageRanking.Laptop;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
@@ -16,16 +17,16 @@ import java.util.Map.Entry;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 
 public class WebInterface {
 
     public static void main(String[] args) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8081), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0); // Changed from 8080 to 8081
         server.createContext("/WebApi", new ApiHandler());
         server.setExecutor(null);
         server.start();
-        System.out.println("Server started at http://localhost:8081/WebApi");
+        System.out.println("Server started at http://localhost:8080/WebApi");
     }
 
     static class ApiHandler implements HttpHandler {
@@ -64,19 +65,21 @@ public class WebInterface {
 
                     case "SearchProduct":
                         try {
-                            String spelling = jsonObject.get("spelling").getAsString();
-                            List<String> suggestions = Features.SearchProduct(spelling);
-                            JsonArray resultArray = new JsonArray();
-                            for (String suggestion : suggestions) {
-                                resultArray.add(suggestion);
+                            String spellings = jsonObject.get("spelling").getAsString();
+                            List<Laptop> laptops = Features.SearchProduct(spellings);
+                            Gson gson = new Gson();
+                            String jsonResponse = gson.toJson(laptops);
+
+                            exchange.getResponseHeaders().add("Content-Type", "application/json");
+                            exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(jsonResponse.getBytes());
                             }
-                            returnJsonObject = new JsonObject();
-                            returnJsonObject.add("result", resultArray);
+                            return;
                         } catch (Exception e) {
                             sendError(exchange, 500, "Internal server error in SearchProduct");
                             return;
                         }
-                        break;
 
                     case "WordCompletion":
                         try {
