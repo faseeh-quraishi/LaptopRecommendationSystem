@@ -1,91 +1,84 @@
 package pageRanking;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.*;
 import java.util.*;
+import AssignmentCodes.InvertedIndexCSV;
 
 public class PageRankerMainClass {
 
-    // Class representing a product
-    static class Product {
-        String brand;
-        String name;
-        String price;
-        String processor;
-        String connectivity;
-        String storage;
-        String memory;
-        String display;
-        String os;
+    private static final String DATA_FILE = "all_laptops_data.csv";
 
-        int frequency;  // keyword frequency for ranking
+    // Represents a product or row with frequency score
+    public static class RankedRow {
+        public int rowNum;
+        public String lineContent;
+        public int frequency;
 
-        public Product(String[] columns, int frequency) {
-            this.brand = columns[0];
-            this.name = columns[1];
-            this.price = columns[2];
-            this.processor = columns[3];
-            this.connectivity = columns[4];
-            this.storage = columns[5];
-            this.memory = columns[6];
-            this.display = columns[7];
-            this.os = columns.length > 8 ? columns[8] : "N/A";
+        public RankedRow(int rowNum, String lineContent, int frequency) {
+            this.rowNum = rowNum;
+            this.lineContent = lineContent;
             this.frequency = frequency;
         }
-
-        public String toString() {
-            return "{ \"brand\": \"" + brand + "\", \"name\": \"" + name + "\", \"price\": \"" + price +
-                   "\", \"processor\": \"" + processor + "\", \"storage\": \"" + storage +
-                   "\", \"memory\": \"" + memory + "\", \"display\": \"" + display + "\", \"os\": \"" + os +
-                   "\", \"frequency\": " + frequency + " }";
-        }
     }
 
-    public List<String> pageRanking(String keyword, Set<Integer> rowsToRank) {
-        List<String> result = new ArrayList<>();
-        List<Product> products = new ArrayList<>();
-        String filePath = "all_laptops_data.csv";
+    public static List<RankedRow> pageRanking(String keyword, Set<Integer> rowsToRank) throws IOException {
+        List<RankedRow> rankedResults = new ArrayList<>();
+        BufferedReader br = new BufferedReader(new FileReader(DATA_FILE));
+        String line;
+        int lineNum = 1;
 
-        try {
-            List<String> lines = Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
-
-            for (int i = 0; i < lines.size(); i++) {
-                if (!rowsToRank.contains(i)) continue;  // Skip rows not in inverted index output
-
-                String line = lines.get(i);
-                String[] columns = line.split(",", -1);  // Preserve empty columns
-
-                String rowText = line.toLowerCase();
-                int freq = countOccurrences(rowText, keyword.toLowerCase());
-
+        while ((line = br.readLine()) != null) {
+            if (rowsToRank.contains(lineNum)) {
+                int freq = countKeywordFrequency(line, keyword);
                 if (freq > 0) {
-                    products.add(new Product(columns, freq));
+                    rankedResults.add(new RankedRow(lineNum, line, freq));
                 }
             }
-
-            // Sort products by frequency in descending order
-            products.sort((a, b) -> Integer.compare(b.frequency, a.frequency));
-
-            for (Product p : products) {
-                result.add(p.toString());
-            }
-
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            lineNum++;
         }
+        br.close();
 
-        return result;
+        // Sort descending by frequency
+        rankedResults.sort((a, b) -> Integer.compare(b.frequency, a.frequency));
+        return rankedResults;
     }
 
-    private int countOccurrences(String text, String keyword) {
+    // Counts occurrences of keyword (case-insensitive) in the text line
+    private static int countKeywordFrequency(String line, String keyword) {
         int count = 0;
-        int index = text.indexOf(keyword);
-        while (index != -1) {
+        String lowerLine = line.toLowerCase();
+        String lowerKeyword = keyword.toLowerCase();
+
+        int index = 0;
+        while ((index = lowerLine.indexOf(lowerKeyword, index)) != -1) {
             count++;
-            index = text.indexOf(keyword, index + keyword.length());
+            index += lowerKeyword.length();
         }
         return count;
+    }
+
+    // For testing or running from main
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter keyword to rank pages: ");
+        String keyword = scanner.nextLine();
+
+        try {
+            // Get relevant rows from Inverted Index
+            Set<Integer> rowsToRank = InvertedIndexCSV.InvertedIndexing(keyword, DATA_FILE);
+            if (rowsToRank.isEmpty()) {
+                System.out.println("No matching rows found for keyword: " + keyword);
+            } else {
+                List<RankedRow> ranked = pageRanking(keyword, rowsToRank);
+                System.out.println("Ranked results:");
+                for (RankedRow r : ranked) {
+                    System.out.printf("Row %d (Frequency: %d): %s%n", r.rowNum, r.frequency, r.lineContent);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading data file: " + e.getMessage());
+        } finally {
+            scanner.close();
+        }
     }
 }

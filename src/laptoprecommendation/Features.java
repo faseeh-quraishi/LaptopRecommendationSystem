@@ -3,6 +3,8 @@ package laptoprecommendation;
 import SearchFrequency.SearchFreq;
 import spellcheckingusingtrie.SpellCheckingMainClass;
 import Wordcompletion.wordcompletionTries;
+
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -10,6 +12,7 @@ import spellcheckingusingtrie.SpellCheckingMainClass;
 import Wordcompletion.wordcompletionTries;
 import Wordcompletion.Trie;
 import AssignmentCodes.InvertedIndexCSV;
+import pageRanking.PageRankerMainClass;
 
 public class Features {
 
@@ -44,13 +47,26 @@ public class Features {
     }
 
     public static List<String> SearchProduct(String word) {
-        //USE THE FOLLOWING FUNCTION TO FETCH THE CSV INDEXES.
-        // For Jill
-        // InvertedIndexCSV.InvertedIndexing(word, DATA_FILE)
-        List<Integer> result = new ArrayList<>(InvertedIndexCSV.InvertedIndexing(word, DATA_FILE));
-        return result.stream()
-                .map(String::valueOf)
+    try {
+        // Fetch the CSV indexes using inverted indexing
+        Set<Integer> rowsToRank = InvertedIndexCSV.InvertedIndexing(word, DATA_FILE);
+
+        if (rowsToRank.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Get the ranked rows based on keyword frequency
+        List<PageRankerMainClass.RankedRow> rankedRows = PageRankerMainClass.pageRanking(word, rowsToRank);
+
+        // Convert RankedRow objects to formatted string results
+        return rankedRows.stream()
+                .map((PageRankerMainClass.RankedRow r) -> String.format("Row %d (Freq: %d): %s", r.rowNum, r.frequency, r.lineContent))
                 .collect(Collectors.toList());
+
+    } catch (IOException e) {
+        System.out.println("Error in SearchProduct: " + e.getMessage());
+        return Collections.emptyList();
     }
+}
 
 }
