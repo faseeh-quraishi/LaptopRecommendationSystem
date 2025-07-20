@@ -4,72 +4,49 @@ import java.util.*;
 
 public class FrequencyFinder {
 
-    // Structure for storing the line no. and position
-    static class MatchRecord {
-        int lineNumber;
-        int position;
+    // Structure for storing the line no. and position of a match
+    public static class MatchRecord {
+        public int lineNumber;
+        public int position;
 
-        MatchRecord(int lineNumber, int position) {
+        public MatchRecord(int lineNumber, int position) {
             this.lineNumber = lineNumber;
             this.position = position;
         }
     }
 
-    public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-
-        // Asking the user for word and converting it into lowercase
-        System.out.print("Enter the word to search for: ");
-        String targetWord = input.nextLine().toLowerCase(); 
-
-        String csvFile = "products_final.csv";
-        int matchCount = 0;
+    // Finds all matches of the given word in the provided CSV file.
+    public static List<MatchRecord> findMatches(String word, String csvFile) {
         List<MatchRecord> matchesFound = new ArrayList<>();
+        int lineCount = 1;
 
         try (BufferedReader fileReader = new BufferedReader(new FileReader(csvFile))) {
             String currentLine;
-            int lineInFile = 0;
-            int actualDataLine = 1; // To skip the title line from csv(Product name, memory, storage,...)
+            int actualLine = 1; // Start after header
 
             while ((currentLine = fileReader.readLine()) != null) {
-                lineInFile++;
+                if (lineCount++ == 1) continue; // Skipping header row
 
-                if (lineInFile == 1) {
-                    continue; // Skipping the first row as it is title row
-                }
-
-                // Converting all words to lowercase
+                // Convert current line and word to lowercase for case-insensitive match
                 String lineToSearch = currentLine.toLowerCase();
+                List<Integer> foundIndexes = locateOccurrences(lineToSearch, word.toLowerCase());
 
-                // Finding matching position of target word in the current line
-                List<Integer> foundIndexes = locateOccurrences(lineToSearch, targetWord);
-
-                // Storing the matches found
+                // Record all found positions
                 for (int index : foundIndexes) {
-                    // Adding one due to search started from line 2
-                    matchesFound.add(new MatchRecord(actualDataLine + 1, index)); 
-                    matchCount++;
+                    matchesFound.add(new MatchRecord(actualLine + 1, index)); // +1 to match real CSV indexing
                 }
 
-                actualDataLine++;
+                actualLine++;
             }
 
         } catch (IOException e) {
             System.err.println("Unable to read the file: " + e.getMessage());
-            return;
         }
 
-        // Final output showing total and individual match locations
-        System.out.println("\nThe word \"" + targetWord + "\" occurred " + matchCount + " times\n");
-        System.out.println("Displaying locations...");
-        for (MatchRecord record : matchesFound) {
-            System.out.println("Found '" + targetWord + "' at index " + record.position + " on line " + record.lineNumber);
-        }
-
-        input.close();
+        return matchesFound;
     }
 
-    // Boyer-Moore Implementation 
+    // Core Boyer-Moore matching logic
     private static List<Integer> locateOccurrences(String textLine, String wordPattern) {
         Map<Character, Integer> shiftTable = buildBadCharacterTable(wordPattern);
         List<Integer> occurrences = new ArrayList<>();
@@ -97,7 +74,7 @@ public class FrequencyFinder {
         return occurrences;
     }
 
-    // Building bad character table to calculate the shift
+    // Builds bad character shift table
     private static Map<Character, Integer> buildBadCharacterTable(String pattern) {
         Map<Character, Integer> table = new HashMap<>();
         for (int i = 0; i < pattern.length(); i++) {

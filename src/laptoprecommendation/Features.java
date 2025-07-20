@@ -13,6 +13,8 @@ import Wordcompletion.wordcompletionTries;
 import Wordcompletion.Trie;
 import AssignmentCodes.InvertedIndexCSV;
 import pageRanking.PageRankerMainClass;
+import FrequencyFinder.FrequencyFinder;
+import FrequencyFinder.FrequencyFinder.MatchRecord;
 
 public class Features {
 
@@ -47,26 +49,36 @@ public class Features {
     }
 
     public static List<String> SearchProduct(String word) {
-    try {
-        // Fetch the CSV indexes using inverted indexing
-        Set<Integer> rowsToRank = InvertedIndexCSV.InvertedIndexing(word, DATA_FILE);
+        try {
+            // Fetch the CSV indexes using inverted indexing
+            Set<Integer> rowsToRank = InvertedIndexCSV.InvertedIndexing(word, DATA_FILE);
 
-        if (rowsToRank.isEmpty()) {
+            if (rowsToRank.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            // Get the ranked rows based on keyword frequency
+            List<PageRankerMainClass.RankedRow> rankedRows = PageRankerMainClass.pageRanking(word, rowsToRank);
+
+            // Convert RankedRow objects to formatted string results
+            return rankedRows.stream()
+                    .map((PageRankerMainClass.RankedRow r) -> String.format("Row %d (Freq: %d): %s", r.rowNum,
+                            r.frequency, r.lineContent))
+                    .collect(Collectors.toList());
+
+        } catch (IOException e) {
+            System.out.println("Error in SearchProduct: " + e.getMessage());
             return Collections.emptyList();
         }
-
-        // Get the ranked rows based on keyword frequency
-        List<PageRankerMainClass.RankedRow> rankedRows = PageRankerMainClass.pageRanking(word, rowsToRank);
-
-        // Convert RankedRow objects to formatted string results
-        return rankedRows.stream()
-                .map((PageRankerMainClass.RankedRow r) -> String.format("Row %d (Freq: %d): %s", r.rowNum, r.frequency, r.lineContent))
-                .collect(Collectors.toList());
-
-    } catch (IOException e) {
-        System.out.println("Error in SearchProduct: " + e.getMessage());
-        return Collections.emptyList();
     }
-}
+
+    public static List<String> FrequencySearch(String keyword) {
+        List<MatchRecord> matches = FrequencyFinder.findMatches(keyword, DATA_FILE);
+        List<String> output = new ArrayList<>();
+        for (MatchRecord match : matches) {
+            output.add("Found at line " + match.lineNumber + ", index " + match.position);
+        }
+        return output;
+    }
 
 }
