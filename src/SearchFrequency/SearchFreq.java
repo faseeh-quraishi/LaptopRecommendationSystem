@@ -165,18 +165,18 @@ public class SearchFreq {
 
     // For testing
     public static void main(String[] args) {
-        SearchFreq sf = new SearchFreq();
-
-        sf.addSearchedWordCount("java");
-        sf.addSearchedWordCount("python");
-        sf.addSearchedWordCount("java");
-        sf.addSearchedWordCount("kotlin");
-        sf.addSearchedWordCount("go");
-        sf.addSearchedWordCount("java");
-
-        System.out.println("Top 5 searched words:");
-        for (Map.Entry<String, Integer> entry : sf.getTop5SearchedWords()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
-    }
+//        SearchFreq sf = new SearchFreq();
+//
+//        sf.addSearchedWordCount("java");
+//        sf.addSearchedWordCount("python");
+//        sf.addSearchedWordCount("java");
+//        sf.addSearchedWordCount("kotlin");
+//        sf.addSearchedWordCount("go");
+//        sf.addSearchedWordCount("java");
+//
+//        System.out.println("Top 5 searched words:");
+//        for (Map.Entry<String, Integer> entry : sf.getTop5SearchedWords()) {
+//            System.out.println(entry.getKey() + ": " + entry.getValue());
+//        }
+   }
 }
