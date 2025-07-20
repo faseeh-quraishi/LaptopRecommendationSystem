@@ -8,11 +8,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import spellcheckingusingtrie.SpellCheckingMainClass;
-import Wordcompletion.wordcompletionTries;
-import Wordcompletion.Trie;
 import AssignmentCodes.InvertedIndexCSV;
 import pageRanking.PageRankerMainClass;
+import pageRanking.Laptop;
 import FrequencyFinder.FrequencyFinder;
 import FrequencyFinder.FrequencyFinder.MatchRecord;
 
@@ -48,7 +46,7 @@ public class Features {
         return spc.SpellCheckingUsingTrie(word);
     }
 
-    public static List<String> SearchProduct(String word) {
+    public static List<Laptop> SearchProduct(String word) {
         try {
             // Fetch the CSV indexes using inverted indexing
             Set<Integer> rowsToRank = InvertedIndexCSV.InvertedIndexing(word, DATA_FILE);
@@ -57,15 +55,7 @@ public class Features {
                 return Collections.emptyList();
             }
 
-            // Get the ranked rows based on keyword frequency
-            List<PageRankerMainClass.RankedRow> rankedRows = PageRankerMainClass.pageRanking(word, rowsToRank);
-
-            // Convert RankedRow objects to formatted string results
-            return rankedRows.stream()
-                    .map((PageRankerMainClass.RankedRow r) -> String.format("Row %d (Freq: %d): %s", r.rowNum,
-                            r.frequency, r.lineContent))
-                    .collect(Collectors.toList());
-
+            return PageRankerMainClass.pageRanking(word, rowsToRank);
         } catch (IOException e) {
             System.out.println("Error in SearchProduct: " + e.getMessage());
             return Collections.emptyList();
