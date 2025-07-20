@@ -29,7 +29,19 @@ public class WebInterface {
     static class ApiHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
             String requestMethod = exchange.getRequestMethod();
-            if (requestMethod.equalsIgnoreCase("GET")) {
+
+            // Always allow CORS
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+
+            // Handle preflight request for CORS
+            if (requestMethod.equalsIgnoreCase("OPTIONS")) {
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+                exchange.sendResponseHeaders(204, -1); // No content
+                return;
+            }
+
+            if (requestMethod.equalsIgnoreCase("POST")) {
                 InputStream is = exchange.getRequestBody();
                 String requestBody = new String(is.readAllBytes(), StandardCharsets.UTF_8);
                 JsonObject jsonObject = com.google.gson.JsonParser.parseString(requestBody).getAsJsonObject();
@@ -66,12 +78,7 @@ public class WebInterface {
                             List<Laptop> laptops = Features.SearchProduct(spellings);
                             Gson gson = new Gson();
                             String jsonResponse = gson.toJson(laptops);
-
-                            exchange.getResponseHeaders().add("Content-Type", "application/json");
-                            exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
-                            try (OutputStream os = exchange.getResponseBody()) {
-                                os.write(jsonResponse.getBytes());
-                            }
+                            sendJson(exchange, jsonResponse);
                             return;
                         } catch (Exception e) {
                             sendError(exchange, 500, "Internal server error in SearchProduct");
@@ -100,11 +107,7 @@ public class WebInterface {
                 }
 
                 String response = returnJsonObject.toString();
-                exchange.getResponseHeaders().add("Content-Type", "application/json");
-                exchange.sendResponseHeaders(200, response.getBytes().length);
-                try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(response.getBytes());
-                }
+                sendJson(exchange, response);
 
             } else {
                 sendError(exchange, 405, "Method Not Allowed");
@@ -112,11 +115,21 @@ public class WebInterface {
         }
     }
 
+    private static void sendJson(HttpExchange exchange, String json) throws IOException {
+        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        byte[] responseBytes = json.getBytes(StandardCharsets.UTF_8);
+        exchange.sendResponseHeaders(200, responseBytes.length);
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(responseBytes);
+        }
+    }
+
     private static void sendError(HttpExchange exchange, int statusCode, String message) throws IOException {
         exchange.getResponseHeaders().add("Content-Type", "text/plain");
-        exchange.sendResponseHeaders(statusCode, message.getBytes().length);
+        byte[] errorBytes = message.getBytes(StandardCharsets.UTF_8);
+        exchange.sendResponseHeaders(statusCode, errorBytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
-            os.write(message.getBytes());
+            os.write(errorBytes);
         }
     }
 }
