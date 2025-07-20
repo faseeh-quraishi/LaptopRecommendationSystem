@@ -5,12 +5,15 @@ import pageRanking.Laptop;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
@@ -44,7 +47,7 @@ public class WebInterface {
             if (requestMethod.equalsIgnoreCase("POST")) {
                 InputStream is = exchange.getRequestBody();
                 String requestBody = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-                JsonObject jsonObject = com.google.gson.JsonParser.parseString(requestBody).getAsJsonObject();
+                JsonObject jsonObject = JsonParser.parseString(requestBody).getAsJsonObject();
 
                 if (!jsonObject.has("method")) {
                     sendError(exchange, 400, "Method name is missing or null");
@@ -58,8 +61,8 @@ public class WebInterface {
 
                     case "spellCheck":
                         try {
-                            String spellings = jsonObject.get("spelling").getAsString();
-                            List<String> suggestions = Features.SpellCheck(spellings);
+                            String spelling = jsonObject.get("spelling").getAsString();
+                            List<String> suggestions = Features.SpellCheck(spelling);
                             JsonArray resultArray = new JsonArray();
                             for (String suggestion : suggestions) {
                                 resultArray.add(suggestion);
@@ -97,6 +100,46 @@ public class WebInterface {
                             returnJsonObject.add("result", resultArray);
                         } catch (Exception e) {
                             sendError(exchange, 500, "Internal server error in WordCompletion");
+                            return;
+                        }
+                        break;
+
+                    case "increaseSearchFrequencyCount":
+                        try {
+                            String word = jsonObject.get("word").getAsString();
+                            Map<String, Integer> updatedCounts = Features.addSearchedWordCount(word);
+
+                            JsonObject resultObject = new JsonObject();
+                            for (Entry<String, Integer> entry : updatedCounts.entrySet()) {
+                                resultObject.addProperty(entry.getKey(), entry.getValue());
+                            }
+
+                            returnJsonObject = new JsonObject();
+                            returnJsonObject.add("result", resultObject);
+
+                        } catch (Exception e) {
+                            sendError(exchange, 500, "Internal server error in increaseSearchFrequencyCount");
+                            return;
+                        }
+                        break;
+
+                    case "getTop5SearchedWords":
+                        try {
+                            List<Entry<String, Integer>> topWords = Features.getTop5SearchedWords();
+
+                            JsonArray resultArray = new JsonArray();
+                            for (Entry<String, Integer> entry : topWords) {
+                                JsonObject entryObject = new JsonObject();
+                                entryObject.addProperty("word", entry.getKey());
+                                entryObject.addProperty("count", entry.getValue());
+                                resultArray.add(entryObject);
+                            }
+
+                            returnJsonObject = new JsonObject();
+                            returnJsonObject.add("result", resultArray);
+
+                        } catch (Exception e) {
+                            sendError(exchange, 500, "Internal server error in getTop5SearchedWords");
                             return;
                         }
                         break;

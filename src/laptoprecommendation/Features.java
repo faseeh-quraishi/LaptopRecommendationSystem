@@ -14,20 +14,30 @@ import pageRanking.Laptop;
 import FrequencyFinder.FrequencyFinder;
 import FrequencyFinder.FrequencyFinder.MatchRecord;
 
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class Features {
 
     private static final String DATA_FILE = "all_laptops_data.csv";
     private static final SearchFreq sf = new SearchFreq();
 
     public static void main(String[] args) {
-        Set<Integer> suggestions = InvertedIndexCSV.InvertedIndexing("laptop", DATA_FILE);
-        System.out.println("🔍 Word Completion Suggestions:");
-        for (int suggestion : suggestions) {
-            System.out.println(suggestion);
-        }
+        // Sample test for search frequency
+//        sf.addSearchedWordCount("java");
+//        sf.addSearchedWordCount("python");
+//        sf.addSearchedWordCount("java");
+//        sf.addSearchedWordCount("kotlin");
+//        sf.addSearchedWordCount("go");
+//        sf.addSearchedWordCount("java");
+//
+//        System.out.println("Top 5 searched words:");
+//        for (Map.Entry<String, Integer> entry : sf.getTop5SearchedWords()) {
+//            System.out.println(entry.getKey() + ": " + entry.getValue());
+//        }
     }
 
-    // Correct return type based on SearchFreq
     public static Map<String, Integer> addSearchedWordCount(String word) {
         return sf.addSearchedWordCount(word);
     }
@@ -48,7 +58,6 @@ public class Features {
 
     public static List<Laptop> SearchProduct(String word) {
         try {
-            // Fetch the CSV indexes using inverted indexing
             Set<Integer> rowsToRank = InvertedIndexCSV.InvertedIndexing(word, DATA_FILE);
 
             if (rowsToRank.isEmpty()) {
@@ -70,5 +79,4 @@ public class Features {
         }
         return output;
     }
-
 }
