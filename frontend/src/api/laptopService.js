@@ -164,12 +164,34 @@ const mockWordFrequency = {
   touchscreen: 76,
 };
 
-export const getSearchFrequency = async () => {
-  await delay(100);
-  return mockSearchFrequency;
+export const getSearchFrequency = async (word) => {
+  const response = await fetch("http://localhost:8080/WebApi", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ method: "increaseSearchFrequencyCount", word }),
+  });
+
+  if (!response.ok) throw new Error("Failed to fetch search frequency");
+  const data = await response.json();
+  return data.result; // Adjust depending on your backend response structure
 };
 
 export const getWordFrequency = async () => {
-  await delay(100);
-  return mockWordFrequency;
+  
+  const response = await fetch("http://localhost:8080/WebApi", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ method: "getTop5SearchedWords" }),
+  });
+
+  if (!response.ok) throw new Error("Failed to fetch word frequency");
+  const data = await response.json();
+
+  const freqMap = {};
+  if (Array.isArray(data.result)) {
+    data.result.forEach(({ word, count }) => {
+      freqMap[word] = Number(count);
+    });
+  }
+  return freqMap;
 };
