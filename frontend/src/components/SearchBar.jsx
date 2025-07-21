@@ -63,7 +63,10 @@ const SearchBar = ({ value, onChange }) => {
         } else if (result.length > 0) {
           setSpellSuggestions(result)
           setSpellError("")
-        } else {
+        } else if (result.length === 0) {
+          setSpellSuggestions([])
+          // setSpellError("")
+        }else {
           setSpellSuggestions([])
           setSpellError("No suggestions available.")
         }
