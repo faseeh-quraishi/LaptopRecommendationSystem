@@ -59,8 +59,15 @@ function App() {
     try {
       // API call with pagination parameters
       const response = await searchLaptops(searchQuery, filters, sortBy, page, 12)
-      setLaptops(response.laptops)
-      setFilteredLaptops(response.laptops)
+
+      // Assign unique id using index for each laptop to fix compare issue
+      const laptopsWithIds = response.laptops.map((laptop, index) => ({
+        ...laptop,
+        id: index,
+      }))
+
+      setLaptops(laptopsWithIds)
+      setFilteredLaptops(laptopsWithIds)
       setPagination(response.pagination)
       setCurrentPage(page)
 

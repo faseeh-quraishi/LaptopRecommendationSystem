@@ -84,12 +84,20 @@ export const spellCheckQuery = async (spelling) => {
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
     const data = await response.json();
-    return data.result || []; // return full result array (suggestions or error)
+
+    // ✅ Return empty array if result is empty, but do NOT treat as error
+    if (Array.isArray(data.result)) {
+      return data.result;
+    }
+
+    // Fallback: if data.result is not an array
+    return ["error: Invalid response format"];
   } catch (error) {
     console.error("❌ Spell check failed:", error);
     return ["error: Request failed"];
   }
 };
+
 
 // ----------------------------------------------
 // 🔎 Main Search Logic (with filters, sorting, pagination)
@@ -161,33 +169,82 @@ export const searchLaptops = async (query, filters, sortBy, page = 1, limit = 12
   };
 };
 
-// ----------------------------------------------
-// 📊 Search & Word Frequency (Mock)
-// ----------------------------------------------
-export const getSearchFrequency = async () => {
-  await delay(100);
-  return {
-    gaming: 145,
-    business: 89,
-    student: 67,
-    programming: 54,
-    design: 43,
-    ultrabook: 38,
-    "2-in-1": 29,
-    workstation: 21,
-  };
+// // Autocomplete suggestions (kept mock for simplicity)
+// export const getAutocompleteSuggestions = async (query) => {
+//   await delay(200);
+//   const suggestions = [
+//     "Dell Inspiron",
+//     "HP Pavilion",
+//     "Lenovo ThinkPad",
+//     "Asus VivoBook",
+//     "MacBook Air",
+//     "MSI Gaming",
+//     "Acer Aspire",
+//     "gaming laptop",
+//     "business laptop",
+//     "student laptop",
+//     "Intel i7",
+//     "AMD Ryzen",
+//     "NVIDIA RTX",
+//     "ultrabook",
+//     "2-in-1 laptop",
+//   ];
+//   return suggestions
+//     .filter((s) => s.toLowerCase().includes(query.toLowerCase()))
+//     .slice(0, 5);
+// };
+
+// Mock analytics data (unchanged)
+const mockSearchFrequency = {
+  gaming: 145,
+  business: 89,
+  student: 67,
+  programming: 54,
+  design: 43,
+  ultrabook: 38,
+  "2-in-1": 29,
+  workstation: 21,
+};
+
+const mockWordFrequency = {
+  laptop: 456,
+  intel: 234,
+  amd: 189,
+  ssd: 334,
+  gaming: 145,
+  rtx: 98,
+  fhd: 267,
+  touchscreen: 76,
+};
+
+export const getSearchFrequency = async (word) => {
+  const response = await fetch("http://localhost:8080/WebApi", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ method: "increaseSearchFrequencyCount", word }),
+  });
+
+  if (!response.ok) throw new Error("Failed to fetch search frequency");
+  const data = await response.json();
+  return data.result; // Adjust depending on your backend response structure
 };
 
 export const getWordFrequency = async () => {
-  await delay(100);
-  return {
-    laptop: 456,
-    intel: 234,
-    amd: 189,
-    ssd: 334,
-    gaming: 145,
-    rtx: 98,
-    fhd: 267,
-    touchscreen: 76,
-  };
+  
+  const response = await fetch("http://localhost:8080/WebApi", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ method: "getTop5SearchedWords" }),
+  });
+
+  if (!response.ok) throw new Error("Failed to fetch word frequency");
+  const data = await response.json();
+
+  const freqMap = {};
+  if (Array.isArray(data.result)) {
+    data.result.forEach(({ word, count }) => {
+      freqMap[word] = Number(count);
+    });
+  }
+  return freqMap;
 };

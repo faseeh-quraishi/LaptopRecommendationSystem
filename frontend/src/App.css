@@ -564,6 +564,7 @@ body {
 }
 
 .modal-image {
+  margin-top: 60px;
   flex: 1;
 }
 
@@ -585,6 +586,7 @@ body {
 }
 
 .price-large {
+  margin: auto 70px;
   font-size: 2rem;
   font-weight: 700;
   color: #7e4ee5;
