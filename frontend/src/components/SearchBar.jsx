@@ -88,7 +88,9 @@ const SearchBar = ({ value, onChange }) => {
           placeholder="Search for laptops..."
           value={value}
           onChange={(e) => {
-            onChange(e.target.value)
+            const input = e.target.value
+            const validInput = input.replace(/[^a-zA-Z0-9 ]/g, "") // sanitize input
+            onChange(validInput)
             setSpellSuggestions([])
             setSpellError("")
           }}
