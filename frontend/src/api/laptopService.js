@@ -1,9 +1,11 @@
-// laptopService.js
+const API_URL = "http://localhost:8080/WebApi";
 
-// Simulate API delay helper
+// Utility delay for simulating real-world delay (optional)
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Function to fetch laptops data from your real API, now accepts query
+// ----------------------------------------------
+// 🔍 Fetch laptops using your real API
+// ----------------------------------------------
 export const fetchLaptopsFromApi = async (query = "") => {
   const settings = {
     method: "POST",
@@ -17,64 +19,109 @@ export const fetchLaptopsFromApi = async (query = "") => {
   };
 
   try {
-    const response = await fetch("http://localhost:8080/WebApi", settings);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
+    const response = await fetch(API_URL, settings);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
 
-    // Assuming data is already in the correct format
+    console.log("📦 Laptop API response:", data); // ✅ Debug log
+
+    // ✅ Check for ["error: message"] format
+    if (Array.isArray(data) && data.length === 1 && typeof data[0] === "string" && data[0].toLowerCase().startsWith("error:")) {
+      console.warn("🛑 API returned error:", data[0]);
+      return [];
+    }
+
     return data;
   } catch (error) {
-    console.error("Failed to fetch laptops from API:", error);
-    // Return empty array or fallback mock data if needed
+    console.error("❌ Failed to fetch laptops from API:", error);
     return [];
   }
 };
 
-// Main search function that fetches from API and applies filtering, sorting, pagination
+// ----------------------------------------------
+// 🧠 Word Completion API call (Autocomplete)
+// ----------------------------------------------
+export const getAutocompleteSuggestions = async (prefix) => {
+  const settings = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      method: "WordCompletion",
+      prefix,
+    }),
+  };
+
+  try {
+    const response = await fetch(API_URL, settings);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    return data.result || [];
+  } catch (error) {
+    console.error("❌ WordCompletion failed:", error);
+    return [];
+  }
+};
+
+// ----------------------------------------------
+// ✅ Spell Check API call
+// ----------------------------------------------
+export const spellCheckQuery = async (spelling) => {
+  const settings = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      method: "spellCheck",
+      spelling,
+    }),
+  };
+
+  try {
+    const response = await fetch(API_URL, settings);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const data = await response.json();
+    return data.result || []; // return full result array (suggestions or error)
+  } catch (error) {
+    console.error("❌ Spell check failed:", error);
+    return ["error: Request failed"];
+  }
+};
+
+// ----------------------------------------------
+// 🔎 Main Search Logic (with filters, sorting, pagination)
+// ----------------------------------------------
 export const searchLaptops = async (query, filters, sortBy, page = 1, limit = 12) => {
-  await delay(500); // Optional simulated delay for realism
+  await delay(500); // Optional simulated delay
 
-  console.log("🔍 Fetching laptops from API with query:", query);
+  console.log("🔍 Searching laptops with query:", query);
 
-  // Get all laptops from real API with query
   const allLaptops = await fetchLaptopsFromApi(query);
-
   let results = [...allLaptops];
 
-  // Filter by search query (in name, brand, or processor)
-//   if (query) {
-// results = results.filter(laptop =>
-//   laptop.name?.toLowerCase().includes(query.toLowerCase()) ||
-//   laptop.brand?.toLowerCase().includes(query.toLowerCase()) ||
-//   laptop.processor?.toLowerCase().includes(query.toLowerCase())
-// );
-//   }
-
-  // Brand filter
-  if (filters.brands && filters.brands.length > 0) {
+  // Apply filters
+  if (filters.brands?.length) {
     results = results.filter((laptop) => filters.brands.includes(laptop.brand));
   }
 
-  // RAM filter
-  if (filters.ram && filters.ram.length > 0) {
+  if (filters.ram?.length) {
     results = results.filter((laptop) => filters.ram.includes(laptop.memory));
   }
 
-  // Storage filter
-  if (filters.storage && filters.storage.length > 0) {
+  if (filters.storage?.length) {
     results = results.filter((laptop) => filters.storage.includes(laptop.storage));
   }
 
-  // Graphics filter
-  if (filters.graphics && filters.graphics.length > 0) {
-    results = results.filter((laptop) => filters.graphics.some((g) => laptop.graphics.includes(g)));
+  if (filters.graphics?.length) {
+    results = results.filter((laptop) =>
+      filters.graphics.some((g) => laptop.graphics?.toLowerCase().includes(g.toLowerCase()))
+    );
   }
 
-  // Price filter
-  if (filters.priceRange && filters.priceRange.length === 2) {
+  if (filters.priceRange?.length === 2) {
     results = results.filter((laptop) => {
       const price = Number.parseInt(laptop.price.replace("$", "").replace(",", ""));
       return price >= filters.priceRange[0] && price <= filters.priceRange[1];
@@ -83,17 +130,15 @@ export const searchLaptops = async (query, filters, sortBy, page = 1, limit = 12
 
   // Sorting
   if (sortBy === "price-low-high") {
-    results.sort((a, b) => {
-      const priceA = Number.parseInt(a.price.replace("$", "").replace(",", ""));
-      const priceB = Number.parseInt(b.price.replace("$", "").replace(",", ""));
-      return priceA - priceB;
-    });
+    results.sort((a, b) =>
+      parseInt(a.price.replace("$", "").replace(",", "")) -
+      parseInt(b.price.replace("$", "").replace(",", ""))
+    );
   } else if (sortBy === "price-high-low") {
-    results.sort((a, b) => {
-      const priceA = Number.parseInt(a.price.replace("$", "").replace(",", ""));
-      const priceB = Number.parseInt(b.price.replace("$", "").replace(",", ""));
-      return priceB - priceA;
-    });
+    results.sort((a, b) =>
+      parseInt(b.price.replace("$", "").replace(",", "")) -
+      parseInt(a.price.replace("$", "").replace(",", ""))
+    );
   }
 
   // Pagination
@@ -116,60 +161,33 @@ export const searchLaptops = async (query, filters, sortBy, page = 1, limit = 12
   };
 };
 
-// Autocomplete suggestions (kept mock for simplicity)
-export const getAutocompleteSuggestions = async (query) => {
-  await delay(200);
-  const suggestions = [
-    "Dell Inspiron",
-    "HP Pavilion",
-    "Lenovo ThinkPad",
-    "Asus VivoBook",
-    "MacBook Air",
-    "MSI Gaming",
-    "Acer Aspire",
-    "gaming laptop",
-    "business laptop",
-    "student laptop",
-    "Intel i7",
-    "AMD Ryzen",
-    "NVIDIA RTX",
-    "ultrabook",
-    "2-in-1 laptop",
-  ];
-  return suggestions
-    .filter((s) => s.toLowerCase().includes(query.toLowerCase()))
-    .slice(0, 5);
-};
-
-// Mock analytics data (unchanged)
-const mockSearchFrequency = {
-  gaming: 145,
-  business: 89,
-  student: 67,
-  programming: 54,
-  design: 43,
-  ultrabook: 38,
-  "2-in-1": 29,
-  workstation: 21,
-};
-
-const mockWordFrequency = {
-  laptop: 456,
-  intel: 234,
-  amd: 189,
-  ssd: 334,
-  gaming: 145,
-  rtx: 98,
-  fhd: 267,
-  touchscreen: 76,
-};
-
+// ----------------------------------------------
+// 📊 Search & Word Frequency (Mock)
+// ----------------------------------------------
 export const getSearchFrequency = async () => {
   await delay(100);
-  return mockSearchFrequency;
+  return {
+    gaming: 145,
+    business: 89,
+    student: 67,
+    programming: 54,
+    design: 43,
+    ultrabook: 38,
+    "2-in-1": 29,
+    workstation: 21,
+  };
 };
 
 export const getWordFrequency = async () => {
   await delay(100);
-  return mockWordFrequency;
+  return {
+    laptop: 456,
+    intel: 234,
+    amd: 189,
+    ssd: 334,
+    gaming: 145,
+    rtx: 98,
+    fhd: 267,
+    touchscreen: 76,
+  };
 };

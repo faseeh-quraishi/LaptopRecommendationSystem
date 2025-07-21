@@ -6,17 +6,13 @@ import Wordcompletion.wordcompletionTries;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 import AssignmentCodes.InvertedIndexCSV;
 import pageRanking.PageRankerMainClass;
 import pageRanking.Laptop;
 import FrequencyFinder.FrequencyFinder;
 import FrequencyFinder.FrequencyFinder.MatchRecord;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class Features {
 

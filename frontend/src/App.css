@@ -863,3 +863,59 @@ body {
     font-size: 0.9rem;
   }
 }
+
+
+
+/* Spell Check Error Message */
+.spellcheck-message.error {
+  color: #dc3545;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Spell Check Suggestions Container */
+.spellcheck-suggestions {
+  max-width: 600px;
+  margin: 0.5rem auto 0 auto;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* Label "Did you mean:" */
+.spellcheck-suggestions p {
+  margin: 0;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+/* Suggestion Buttons */
+.spellcheck-suggestions .suggestion-items {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.spellcheck-suggestions button {
+  padding: 0.5rem 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #495057;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.spellcheck-suggestions button:hover {
+  background-color: #e9ecef;
+  color: #7e4ee5;
+  border-color: #7e4ee5;
+}
