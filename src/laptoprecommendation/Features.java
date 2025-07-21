@@ -7,12 +7,11 @@ import Wordcompletion.wordcompletionTries;
 import java.io.IOException;
 import java.util.*;
 
-
-import AssignmentCodes.InvertedIndexCSV;
 import pageRanking.PageRankerMainClass;
 import pageRanking.Laptop;
 import FrequencyFinder.FrequencyFinder;
 import FrequencyFinder.FrequencyFinder.MatchRecord;
+import InvertedIndex.InvertedIndexCSV;
 
 public class Features {
 

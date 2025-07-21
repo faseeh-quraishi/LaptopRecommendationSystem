@@ -1,15 +1,15 @@
-package AssignmentCodes;
+package InvertedIndex;
 import java.io.*;
 import java.util.*;
 
 public class InvertedIndexCSV {
 
-    // Trie node definition                                     
-    static class TrieNode {                                 
+    // Trie node definition
+    static class TrieNode {
         Map<Character, TrieNode> children = new HashMap<>();
-        boolean isEndOfWord = false;                        
-        Set<Integer> rows = new HashSet<>();                
-    }                                                       
+        boolean isEndOfWord = false;
+        Set<Integer> rows = new HashSet<>();
+    }
 
     static TrieNode root = new TrieNode();
 
@@ -21,7 +21,7 @@ public class InvertedIndexCSV {
         }
         current.isEndOfWord = true;
         current.rows.add(rowNum);
-    }                                                               
+    }
 
     // Build the inverted index from the CSV file
     public static void buildIndex(String csvPath) throws IOException {
@@ -84,13 +84,33 @@ public class InvertedIndexCSV {
         }
     }
 
-    public static Set<Integer> InvertedIndexing(String word, String fileName) {
+    public static Set<Integer> InvertedIndexing(String query, String fileName) {
         try {
             root = new TrieNode();
             System.out.println("Building index from " + fileName + " ...");
             buildIndex(fileName);
-            Set<Integer> result = search(word);
-            return result;
+
+            // Split query into individual words (e.g., "Apple Macbook" → ["Apple",
+            // "Macbook"])
+            String[] words = query.split("[^a-zA-Z]+");
+
+            Set<Integer> result = null;
+            for (String word : words) {
+                if (word.isEmpty())
+                    continue;
+                Set<Integer> wordRows = search(word);
+                if (result == null) {
+                    result = new HashSet<>(wordRows);
+                } else {
+                    result.retainAll(wordRows); // Intersection: only keep rows containing all words
+                }
+
+                // Early exit if no rows are common
+                if (result.isEmpty()) {
+                    break;
+                }
+            }
+            return result != null ? result : Collections.emptySet();
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
             return Collections.emptySet();

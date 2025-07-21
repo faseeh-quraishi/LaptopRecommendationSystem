@@ -2,7 +2,8 @@ package pageRanking;
 
 import java.io.*;
 import java.util.*;
-import AssignmentCodes.InvertedIndexCSV;
+
+import InvertedIndex.InvertedIndexCSV;
 
 public class PageRankerMainClass {
 

@@ -28,7 +28,8 @@ const ProductCard = ({ laptop, onClick, onCompareToggle, isSelected, canSelect, 
       </div>
 
       <div className="card-content">
-        <h3 className="card-title">{highlightMatch(laptop.name, searchQuery)}</h3>
+        <h3 className="card-title">{highlightMatch(laptop.brandName, searchQuery)}</h3>
+        <h3 className="card-title">{highlightMatch(laptop.product, searchQuery)}</h3>
         <p className="card-processor">{highlightMatch(laptop.processor, searchQuery)}</p>
         <p className="card-storage">{highlightMatch(laptop.storage, searchQuery)}</p>
         <p className="card-price">{laptop.price}</p>
