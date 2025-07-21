@@ -172,6 +172,7 @@ function App() {
             onCompareToggle={handleCompareToggle}
             compareList={compareList}
             pagination={pagination}
+            searchQuery={searchQuery} // ✅ Correct
           />
         )}
 

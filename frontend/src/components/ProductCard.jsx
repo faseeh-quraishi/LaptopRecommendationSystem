@@ -1,10 +1,23 @@
 "use client"
 
-const ProductCard = ({ laptop, onClick, onCompareToggle, isSelected, canSelect }) => {
+const ProductCard = ({ laptop, onClick, onCompareToggle, isSelected, canSelect, searchQuery }) => {
   const handleCompareClick = (e) => {
     e.stopPropagation()
     if (canSelect) {
       onCompareToggle()
+    }
+  }
+
+  // Highlight matched parts using <mark>
+  const highlightMatch = (text, query) => {
+    if (!query || typeof text !== "string") return text
+    try {
+      const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi")
+      return text.split(regex).map((part, index) =>
+        regex.test(part) ? <mark key={index}>{part}</mark> : part
+      )
+    } catch {
+      return text // fallback if regex fails
     }
   }
 
@@ -15,9 +28,9 @@ const ProductCard = ({ laptop, onClick, onCompareToggle, isSelected, canSelect }
       </div>
 
       <div className="card-content">
-        <h3 className="card-title">{laptop.name}</h3>
-        <p className="card-processor">{laptop.processor}</p>
-        <p className="card-storage">{laptop.storage}</p>
+        <h3 className="card-title">{highlightMatch(laptop.name, searchQuery)}</h3>
+        <p className="card-processor">{highlightMatch(laptop.processor, searchQuery)}</p>
+        <p className="card-storage">{highlightMatch(laptop.storage, searchQuery)}</p>
         <p className="card-price">{laptop.price}</p>
       </div>
 

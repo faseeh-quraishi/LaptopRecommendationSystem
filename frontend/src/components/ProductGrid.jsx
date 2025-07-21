@@ -2,7 +2,15 @@
 
 import ProductCard from "./ProductCard"
 
-const ProductGrid = ({ laptops, loading, onLaptopClick, onCompareToggle, compareList, pagination }) => {
+const ProductGrid = ({
+  laptops,
+  loading,
+  onLaptopClick,
+  onCompareToggle,
+  compareList,
+  pagination,
+  searchQuery,
+}) => {
   if (loading) {
     return (
       <div className="loading-container">
@@ -33,16 +41,22 @@ const ProductGrid = ({ laptops, loading, onLaptopClick, onCompareToggle, compare
       )}
 
       <div className="product-grid">
-        {laptops.map((laptop) => (
-          <ProductCard
-            key={laptop.id}
-            laptop={laptop}
-            onClick={() => onLaptopClick(laptop)}
-            onCompareToggle={() => onCompareToggle(laptop)}
-            isSelected={compareList.some((item) => item.id === laptop.id)}
-            canSelect={compareList.length < 3 || compareList.some((item) => item.id === laptop.id)}
-          />
-        ))}
+        {laptops.map((laptop) => {
+          const isSelected = compareList.some((item) => item.id === laptop.id)
+          const canSelect = isSelected || compareList.length < 3
+
+          return (
+            <ProductCard
+              key={laptop.id}
+              laptop={laptop}
+              onClick={() => onLaptopClick(laptop)}
+              onCompareToggle={() => onCompareToggle(laptop)}
+              isSelected={isSelected}
+              canSelect={canSelect}
+              searchQuery={searchQuery}
+            />
+          )
+        })}
       </div>
     </div>
   )
