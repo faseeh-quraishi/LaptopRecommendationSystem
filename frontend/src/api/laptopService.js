@@ -195,16 +195,16 @@ export const searchLaptops = async (query, filters, sortBy, page = 1, limit = 12
 // };
 
 // Mock analytics data (unchanged)
-const mockSearchFrequency = {
-  gaming: 145,
-  business: 89,
-  student: 67,
-  programming: 54,
-  design: 43,
-  ultrabook: 38,
-  "2-in-1": 29,
-  workstation: 21,
-};
+// const mockSearchFrequency = {
+//   gaming: 145,
+//   business: 89,
+//   student: 67,
+//   programming: 54,
+//   design: 43,
+//   ultrabook: 38,
+//   abc: 29,
+//   workstation: 21,
+// };
 
 const mockWordFrequency = {
   laptop: 456,
@@ -217,7 +217,7 @@ const mockWordFrequency = {
   touchscreen: 76,
 };
 
-export const getSearchFrequency = async (word) => {
+export const increaseSearchFrequencyCount = async (word) => {
   const response = await fetch("http://localhost:8080/WebApi", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -229,7 +229,7 @@ export const getSearchFrequency = async (word) => {
   return data.result; // Adjust depending on your backend response structure
 };
 
-export const getWordFrequency = async () => {
+export const getSearchFrequency = async () => {
   
   const response = await fetch("http://localhost:8080/WebApi", {
     method: "POST",
@@ -246,5 +246,26 @@ export const getWordFrequency = async () => {
       freqMap[word] = Number(count);
     });
   }
+  return freqMap;
+};
+
+export const getWordFrequency = async () => {
+  
+  // const response = await fetch("http://localhost:8080/WebApi", {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ method: "getTop5SearchedWords" }),
+  // });
+
+  // if (!response.ok) throw new Error("Failed to fetch word frequency");
+  // const data = await response.json();
+
+  // const freqMap = {};
+  // if (Array.isArray(data.result)) {
+  //   data.result.forEach(({ word, count }) => {
+  //     freqMap[word] = Number(count);
+  //   });
+  // }
+  const freqMap = mockWordFrequency; // Use mock data for now
   return freqMap;
 };

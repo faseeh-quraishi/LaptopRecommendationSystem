@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { getAutocompleteSuggestions, spellCheckQuery } from "../api/laptopService"
+import { increaseSearchFrequencyCount } from "../api/laptopService"
 
-const SearchBar = ({ value, onChange }) => {
+const SearchBar = ({ value, onChange, onSearch }) => {
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [spellSuggestions, setSpellSuggestions] = useState([])
@@ -22,7 +23,7 @@ const SearchBar = ({ value, onChange }) => {
           ) {
             setSuggestions([])
             setShowSuggestions(false)
-            setSpellError(results[0].slice(6).trim()) // Remove 'error:' prefix
+            setSpellError(results[0].slice(6).trim())
           } else {
             setSuggestions(results)
             setShowSuggestions(true)
@@ -63,15 +64,19 @@ const SearchBar = ({ value, onChange }) => {
         } else if (result.length > 0) {
           setSpellSuggestions(result)
           setSpellError("")
-        } else if (result.length === 0) {
+        } else {
           setSpellSuggestions([])
-          // setSpellError("")
-        }else {
-          setSpellSuggestions([])
-          setSpellError("No suggestions available.")
         }
 
         setShowSuggestions(false)
+
+        // ✅ Call parent search handler
+        if (onSearch) {
+          onSearch()
+        }
+
+        // ✅ Increase frequency count
+        await increaseSearchFrequencyCount(value.toLowerCase().trim())
       } catch (err) {
         console.error("Spell check failed:", err)
         setSpellError("Something went wrong during spell check.")
@@ -79,6 +84,7 @@ const SearchBar = ({ value, onChange }) => {
       }
     }
   }
+
 
   return (
     <div className="search-bar">
@@ -100,7 +106,6 @@ const SearchBar = ({ value, onChange }) => {
         <div className="search-icon">🔍</div>
       </div>
 
-      {/* Word Completion Suggestions */}
       {showSuggestions && suggestions.length > 0 && (
         <div className="suggestions-dropdown">
           {suggestions.map((suggestion, index) => (
@@ -115,12 +120,10 @@ const SearchBar = ({ value, onChange }) => {
         </div>
       )}
 
-      {/* Spell Check Error Message */}
       {spellError && (
         <div className="spellcheck-message error">{spellError}</div>
       )}
 
-      {/* Spell Check Suggestions */}
       {spellSuggestions.length > 0 && (
         <div className="spellcheck-suggestions">
           <p>Did you mean:</p>
