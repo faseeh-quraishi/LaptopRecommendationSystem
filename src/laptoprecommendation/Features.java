@@ -19,18 +19,9 @@ public class Features {
     private static final SearchFreq sf = new SearchFreq();
 
     public static void main(String[] args) {
-        // Sample test for search frequency
-//        sf.addSearchedWordCount("java");
-//        sf.addSearchedWordCount("python");
-//        sf.addSearchedWordCount("java");
-//        sf.addSearchedWordCount("kotlin");
-//        sf.addSearchedWordCount("go");
-//        sf.addSearchedWordCount("java");
-//
-//        System.out.println("Top 5 searched words:");
-//        for (Map.Entry<String, Integer> entry : sf.getTop5SearchedWords()) {
-//            System.out.println(entry.getKey() + ": " + entry.getValue());
-//        }
+        Map<String, Object> output = FrequencySearch("m1");
+        System.out.println(output);
+
     }
 
     public static Map<String, Integer> addSearchedWordCount(String word) {
@@ -66,12 +57,12 @@ public class Features {
         }
     }
 
-    public static List<String> FrequencySearch(String keyword) {
+    public static Map<String, Object> FrequencySearch(String keyword) {
         List<MatchRecord> matches = FrequencyFinder.findMatches(keyword, DATA_FILE);
-        List<String> output = new ArrayList<>();
-        for (MatchRecord match : matches) {
-            output.add("Found at line " + match.lineNumber + ", index " + match.position);
-        }
-        return output;
+        int totalCount = matches.size();
+        Map<String, Object> result = new HashMap<>();
+        result.put("word", keyword);
+        result.put("occurrence", totalCount);
+        return result;
     }
 }
