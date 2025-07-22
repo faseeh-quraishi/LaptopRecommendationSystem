@@ -144,6 +144,18 @@ public class WebInterface {
                             return;
                         }
                         break;
+                    case "getWordFrequency":
+                        try {
+                            String spellings = jsonObject.get("spelling").getAsString();
+                            Map<String, Object> wordFrequency = Features.FrequencySearch(spellings);
+                            Gson gson = new Gson();
+                            String jsonResponse = gson.toJson(wordFrequency);
+                            sendJson(exchange, jsonResponse);
+                            return;
+                        } catch (Exception e) {
+                            sendError(exchange, 500, "Internal server error in getWordFrequency");
+                            return;
+                        }
 
                     default:
                         sendError(exchange, 400, "Invalid method");
