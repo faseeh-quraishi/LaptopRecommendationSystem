@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { getAutocompleteSuggestions, spellCheckQuery } from "../api/laptopService"
 import { increaseSearchFrequencyCount } from "../api/laptopService"
+import { getWordFrequency } from "../api/laptopService"; // make sure it's imported
 
 const SearchBar = ({ value, onChange, onSearch }) => {
   const [suggestions, setSuggestions] = useState([])
@@ -52,38 +53,45 @@ const SearchBar = ({ value, onChange, onSearch }) => {
   const handleKeyDown = async (e) => {
     if (e.key === "Enter") {
       try {
-        const result = await spellCheckQuery(value)
+        const result = await spellCheckQuery(value);
 
         if (
           result.length === 1 &&
           typeof result[0] === "string" &&
           result[0].toLowerCase().startsWith("error:")
         ) {
-          setSpellSuggestions([])
-          setSpellError(result[0].slice(6).trim())
+          setSpellSuggestions([]);
+          setSpellError(result[0].slice(6).trim());
         } else if (result.length > 0) {
-          setSpellSuggestions(result)
-          setSpellError("")
+          setSpellSuggestions(result);
+          setSpellError("");
         } else {
-          setSpellSuggestions([])
+          setSpellSuggestions([]);
         }
 
-        setShowSuggestions(false)
+        setShowSuggestions(false);
 
         // ✅ Call parent search handler
         if (onSearch) {
-          onSearch()
+          onSearch();
         }
 
+        const trimmedValue = value.toLowerCase().trim();
+
         // ✅ Increase frequency count
-        await increaseSearchFrequencyCount(value.toLowerCase().trim())
+        await increaseSearchFrequencyCount(trimmedValue);
+
+        // ✅ Get word frequency
+        const freq = await getWordFrequency(trimmedValue);
+        console.log("🔢 Word frequency result:", freq);
+        
       } catch (err) {
-        console.error("Spell check failed:", err)
-        setSpellError("Something went wrong during spell check.")
-        setSpellSuggestions([])
+        console.error("Spell check or frequency failed:", err);
+        setSpellError("Something went wrong during spell check.");
+        setSpellSuggestions([]);
       }
     }
-  }
+  };
 
 
   return (

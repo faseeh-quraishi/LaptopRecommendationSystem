@@ -1,6 +1,8 @@
+acer=3
+asus=1
 go=1
-java=5
+java=6
 javajava=1
 kotlin=1
-laptop=5
+laptop=6
 python=1

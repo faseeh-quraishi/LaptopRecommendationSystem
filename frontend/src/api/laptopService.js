@@ -169,54 +169,6 @@ export const searchLaptops = async (query, filters, sortBy, page = 1, limit = 12
   };
 };
 
-// // Autocomplete suggestions (kept mock for simplicity)
-// export const getAutocompleteSuggestions = async (query) => {
-//   await delay(200);
-//   const suggestions = [
-//     "Dell Inspiron",
-//     "HP Pavilion",
-//     "Lenovo ThinkPad",
-//     "Asus VivoBook",
-//     "MacBook Air",
-//     "MSI Gaming",
-//     "Acer Aspire",
-//     "gaming laptop",
-//     "business laptop",
-//     "student laptop",
-//     "Intel i7",
-//     "AMD Ryzen",
-//     "NVIDIA RTX",
-//     "ultrabook",
-//     "2-in-1 laptop",
-//   ];
-//   return suggestions
-//     .filter((s) => s.toLowerCase().includes(query.toLowerCase()))
-//     .slice(0, 5);
-// };
-
-// Mock analytics data (unchanged)
-// const mockSearchFrequency = {
-//   gaming: 145,
-//   business: 89,
-//   student: 67,
-//   programming: 54,
-//   design: 43,
-//   ultrabook: 38,
-//   abc: 29,
-//   workstation: 21,
-// };
-
-const mockWordFrequency = {
-  laptop: 456,
-  intel: 234,
-  amd: 189,
-  ssd: 334,
-  gaming: 145,
-  rtx: 98,
-  fhd: 267,
-  touchscreen: 76,
-};
-
 export const increaseSearchFrequencyCount = async (word) => {
   const response = await fetch("http://localhost:8080/WebApi", {
     method: "POST",
@@ -249,23 +201,22 @@ export const getSearchFrequency = async () => {
   return freqMap;
 };
 
-export const getWordFrequency = async () => {
-  
-  // const response = await fetch("http://localhost:8080/WebApi", {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({ method: "getTop5SearchedWords" }),
-  // });
+export const getWordFrequency = async (spelling) => {
+  const response = await fetch("http://localhost:8080/WebApi", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ method: "getWordFrequency", spelling }),
+  });
 
-  // if (!response.ok) throw new Error("Failed to fetch word frequency");
-  // const data = await response.json();
+  if (!response.ok) throw new Error("Failed to fetch word frequency");
 
-  // const freqMap = {};
-  // if (Array.isArray(data.result)) {
-  //   data.result.forEach(({ word, count }) => {
-  //     freqMap[word] = Number(count);
-  //   });
-  // }
-  const freqMap = mockWordFrequency; // Use mock data for now
-  return freqMap;
+  const data = await response.json();
+
+  if (data.word && data.occurrence !== undefined) {
+    return { [data.word]: Number(data.occurrence) }; // ✅ return as object
+  } else {
+    throw new Error("Invalid response format");
+  }
 };
+
+

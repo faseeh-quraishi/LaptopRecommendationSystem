@@ -74,9 +74,19 @@ function App() {
       // Fetch frequency data (only on first page to avoid unnecessary calls)
       if (page === 1) {
         const searchFreq = await getSearchFrequency()
-        const wordFreq = await getWordFrequency()
         setSearchFrequency(searchFreq)
-        setWordFrequency(wordFreq)
+
+        if (searchQuery.trim()) {
+          try {
+            const wordFreqRaw = await getWordFrequency(searchQuery.trim())
+            setWordFrequency(wordFreqRaw)
+          } catch (err) {
+            console.warn("Could not fetch word frequency:", err)
+            setWordFrequency({})
+          }
+        } else {
+          setWordFrequency({})
+        }
       }
     } catch (error) {
       console.error("Search failed:", error)
