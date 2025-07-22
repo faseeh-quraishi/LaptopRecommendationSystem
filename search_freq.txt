@@ -1,6 +1,8 @@
+=1
 dell=2
 go=1
-java=6
+hp=1
+java=18
 javajava=1
 kotlin=1
 laptop=6
