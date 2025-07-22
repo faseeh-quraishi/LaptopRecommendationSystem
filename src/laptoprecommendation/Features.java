@@ -27,7 +27,7 @@ public class Features {
         System.out.println(output);
 
         // Testing Crawler Features
-        runWebCrawler("https://uwaterloo.ca");
+        runWebCrawler("https://www.uwindsor.ca/");
         runHtmlToTextConverter();
         runRegexExtractor();
     }

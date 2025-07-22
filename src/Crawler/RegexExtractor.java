@@ -20,8 +20,9 @@ public class RegexExtractor {
 
     // Pattern to locate valid email addresses in the text
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
-        "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
-    );
+            "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}",
+            Pattern.CASE_INSENSITIVE
+        );
 
     // Pattern to identify HTTP and HTTPS links
     private static final Pattern URL_PATTERN = Pattern.compile(
