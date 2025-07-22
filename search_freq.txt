@@ -1,5 +1,7 @@
 dell=2
 go=1
-java=3
+java=5
+javajava=1
 kotlin=1
+laptop=5
 python=1

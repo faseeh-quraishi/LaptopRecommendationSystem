@@ -143,7 +143,11 @@ function App() {
 
       <main className="app-main">
         <div className="search-section">
-          <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onSearch={() => handleSearch(1)} // Called when user presses Enter
+          />
 
           <FilterBar
             filters={filters}
