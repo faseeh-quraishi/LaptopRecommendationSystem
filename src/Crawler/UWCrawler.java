@@ -18,7 +18,7 @@ import java.util.Set;
 public class UWCrawler {
 
     private static final String SAVE_DIRECTORY = "saved_pages";
-    private static final int MAX_PAGES = 100;
+    private static final int MAX_PAGES = 30;
 
     private Set<String> visitedPages = new HashSet<>();
     private Queue<String> pagesToVisit = new LinkedList<>();

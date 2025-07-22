@@ -7,6 +7,9 @@ import Wordcompletion.wordcompletionTries;
 import java.io.IOException;
 import java.util.*;
 
+import Crawler.HTMLtoTextConverter;
+import Crawler.RegexExtractor;
+import Crawler.UWCrawler;
 import pageRanking.PageRankerMainClass;
 import pageRanking.Laptop;
 import FrequencyFinder.FrequencyFinder;
@@ -19,11 +22,17 @@ public class Features {
     private static final SearchFreq sf = new SearchFreq();
 
     public static void main(String[] args) {
+        // Testing Laptop Recommendation System Features
         Map<String, Object> output = FrequencySearch("m1");
         System.out.println(output);
 
+        // Testing Crawler Features
+        runWebCrawler("https://www.uwindsor.ca/");
+        runHtmlToTextConverter();
+        runRegexExtractor();
     }
 
+    // -------------------- Laptop Recommendation Features --------------------
     public static Map<String, Integer> addSearchedWordCount(String word) {
         return sf.addSearchedWordCount(word);
     }
@@ -64,5 +73,19 @@ public class Features {
         result.put("word", keyword);
         result.put("occurrence", totalCount);
         return result;
+    }
+
+    // -------------------- Crawler Features --------------------
+    public static void runWebCrawler(String startUrl) {
+        UWCrawler crawler = new UWCrawler();
+        crawler.crawl(startUrl);
+    }
+
+    public static void runHtmlToTextConverter() {
+        HTMLtoTextConverter.main(new String[]{});
+    }
+
+    public static void runRegexExtractor() {
+        RegexExtractor.main(new String[]{});
     }
 }

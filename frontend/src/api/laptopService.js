@@ -7,6 +7,9 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // 🔍 Fetch laptops using your real API
 // ----------------------------------------------
 export const fetchLaptopsFromApi = async (query = "") => {
+  if (query == "") {
+    query = "apple";
+  }
   const settings = {
     method: "POST",
     headers: {
