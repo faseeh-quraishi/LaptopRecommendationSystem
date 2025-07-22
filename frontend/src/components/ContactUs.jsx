@@ -1,6 +1,11 @@
 "use client"
 import { useState } from "react"
 import "./ContactUs.css"
+import Hasnain_Mirza from '../teamphotos/Hasnain_Mirza.jpeg'
+// import Faseeh from '../teamphotos/Faseeh.jpeg'
+import Jill from '../teamphotos/Jill.jpeg'
+import Kamraan from '../teamphotos/Kamraan.jpeg'
+import Rohan from '../teamphotos/Rohan.jpeg'
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({ name: "", email: "", phone: "" })
@@ -11,28 +16,28 @@ const ContactUs = () => {
   const teamMembers = [
     {
       id: 1,
-      name: "John Smith",
-      photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+      name: "Hasnain Mirza",
+      photo: Hasnain_Mirza
     },
     {
       id: 2,
-      name: "Sarah Johnson",
-      photo: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
+      name: "Faseeh Qureshi",
+      photo: ""
     },
     {
       id: 3,
-      name: "Mike Chen",
-      photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+      name: "Jill Patel",
+      photo: Jill
     },
     {
       id: 4,
-      name: "Emma Davis",
-      photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+      name: "Kamraan Ahmed",
+      photo: Kamraan
     },
     {
       id: 5,
-      name: "Alex Rodriguez",
-      photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
+      name: "Rohan",
+      photo: Rohan
     }
   ]
 

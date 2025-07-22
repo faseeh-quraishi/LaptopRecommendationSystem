@@ -6,10 +6,10 @@ const FilterBar = ({ filters, onFiltersChange, onClearFilters, searchFrequency, 
   const [showDropdowns, setShowDropdowns] = useState({})
 
   const filterOptions = {
-    brands: ["Dell", "HP", "Lenovo", "Asus", "Acer", "Apple", "MSI"],
+    brands: ["Acer", "Apple", "Asus", "Dell", "HP"],
     ram: ["4 GB", "8 GB", "16 GB", "32 GB"],
-    storage: ["256 GB SSD", "512 GB SSD", "1 TB SSD", "1 TB HDD"],
-    display: ['13.3"', '14"', '15.6"', '17.3"'],
+    storage: ["256 GB SSD", "512 GB SSD", "1 TB SSD"],
+    display: ['13"', '14"', '15"', '17"'],
     graphics: ["Intel UHD", "NVIDIA GTX", "NVIDIA RTX", "AMD Radeon"],
   }
 

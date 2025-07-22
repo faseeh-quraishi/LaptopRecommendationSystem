@@ -1,15 +1,17 @@
 .contact-form-container {
-  max-width: none;
-  width: fit-content;
+  max-width: 90vw;
+  width: 90vw;
   margin: 0 auto;
   background-color: white;
   padding: 30px;
   border-radius: 16px;
+  box-sizing: border-box;
+  overflow: hidden; /* prevent scrolling */
 }
 
 .contact-form-container h2 {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   color: #333;
   font-size: 1.8rem;
 }
@@ -17,7 +19,6 @@
 /* Team Section Styles */
 .team-section {
   margin-bottom: 40px;
-  padding-bottom: 30px;
   border-bottom: 2px solid #f0f0f0;
 }
 
@@ -32,9 +33,11 @@
 .team-members {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 20px;
+  align-items: flex-end;
+  gap: 32px;
   flex-wrap: nowrap;
+  overflow-x: unset;
+  width: 100%;
 }
 
 .team-member {
@@ -44,15 +47,16 @@
   align-items: center;
   min-width: 140px;
   text-align: center;
+  margin-bottom: 16px;
 }
 
 .member-photo {
-  width: 120px;
-  height: 120px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   overflow: hidden;
-  margin-bottom: 12px;
-  border: 3px solid #7e4ee5;
+  margin-bottom: 16px;
+  border: 4px solid #7e4ee5;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -78,6 +82,12 @@
 
 /* Contact Form Styles */
 .contact-form {
+  max-width: 400px;
+  margin: 32px auto 0 auto;
+  background: #faf9ff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(126, 78, 229, 0.06);
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -134,29 +144,45 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1400px) {
+  .contact-form-container {
+    max-width: 100vw;
+    width: 100vw;
+    padding: 10px;
+  }
+  .team-members {
+    gap: 16px;
+  }
+}
+
 @media (max-width: 768px) {
   .contact-form-container {
     max-width: 95%;
     padding: 20px;
   }
-
   .team-members {
-    flex-wrap: wrap; /* On smaller screens, allow wrapping */
-    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
   }
-
   .team-member {
     min-width: 120px;
+  }
+  .member-photo {
+    width: 140px;
+    height: 140px;
   }
 }
 
 @media (max-width: 600px) {
   .member-photo {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
   }
-
   .member-name {
     font-size: 14px;
+  }
+  .contact-form {
+    max-width: 95vw;
+    padding: 16px 8px;
   }
 }

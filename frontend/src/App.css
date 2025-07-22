@@ -996,7 +996,8 @@ body {
 
 /* Contact Us modal specific sizing */
 .contact-modal {
-  max-width: 600px;
+  max-width: 100vw !important;
+  width: 100vw !important;
 }
 
 /* Web Crawler modal specific sizing */
