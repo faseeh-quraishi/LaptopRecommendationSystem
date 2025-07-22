@@ -132,23 +132,71 @@ body {
 
 /* Filter Bar */
 .filter-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
   background: white;
-  padding: 1.5rem;
+  padding: 1.5rem 2rem;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.filter-controls-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+.filter-actions-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: nowrap;
+  margin-left: 0;
 }
 
 .filter-controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  flex-direction: row;
   align-items: center;
+  justify-content: flex-start;
+  gap: 1.25rem;
+  flex-wrap: nowrap;
 }
 
 .filter-dropdown {
   position: relative;
+  min-width: 150px;
+  max-width: 180px;
+  margin-right: 0.1rem;
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
+}
+
+.price-filter {
+  min-width: 180px;
+  max-width: 220px;
+  margin-left: 1rem;
+  margin-right: 50px;
+}
+
+.filter-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  margin-left: 1.5rem;
+  margin-top: 0;
+  justify-content: flex-end;
 }
 
 .filter-button {
@@ -184,6 +232,7 @@ body {
   z-index: 100;
   min-width: 200px;
   padding: 0.5rem;
+  overflow: visible;
 }
 
 .checkbox-label {
@@ -198,19 +247,6 @@ body {
 
 .checkbox-label:hover {
   background-color: #f8f9fa;
-}
-
-.price-filter {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-width: 250px;
-}
-
-.price-filter label {
-  font-weight: 500;
-  color: #495057;
-  font-size: 0.9rem;
 }
 
 /* Dual Range Slider */
@@ -299,11 +335,6 @@ body {
   pointer-events: all;
 }
 
-.filter-actions {
-  display: flex;
-  gap: 1rem;
-}
-
 .apply-filters-btn,
 .clear-filters-btn {
   padding: 0.75rem 1.5rem;
@@ -334,11 +365,12 @@ body {
 }
 
 .frequency-display {
-  margin-top: 1rem;
-  padding-top: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
   border-top: 1px solid #e1e5e9;
   display: flex;
-  gap: 2rem;
+  gap: 3rem;
+  justify-content: center;
 }
 
 .frequency-section h4 {
@@ -865,7 +897,30 @@ body {
   }
 }
 
+@media (max-width: 1100px) {
+  .filter-bar, .filter-controls-row {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .price-filter {
+    margin-left: 0.5rem;
+    margin-right: 0.25rem;
+  }
+}
 
+@media (max-width: 800px) {
+  .filter-bar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .filter-controls {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .filter-actions {
+    margin-left: 0;
+  }
+}
 
 /* Spell Check Error Message */
 .spellcheck-message.error {
@@ -920,7 +975,6 @@ body {
   color: #7e4ee5;
   border-color: #7e4ee5;
 }
-
 
 /* Action Buttons - Container for Contact Us and Crawler buttons */
 .action-buttons {
