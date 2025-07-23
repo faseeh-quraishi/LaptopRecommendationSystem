@@ -1,12 +1,12 @@
 ace=1
-acer=8
+acer=13
 acerr=2
 aero=1
 appl=1
-apple=1
-asus=3
-dell=3
-hp=2
+apple=3
+asus=6
+dell=6
+hp=4
 intel i5=1
 intel pentium processor=1
 laptop=6
