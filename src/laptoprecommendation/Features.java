@@ -22,15 +22,12 @@ public class Features {
     private static final SearchFreq sf = new SearchFreq();
 
     public static void main(String[] args) {
-        // Testing Laptop Recommendation System Features
-        Map<String, Object> output = FrequencySearch("m1");
-        System.out.println(output);
+        // Map<String, String> result = crawlAndExtract("https://www.hp.com/ca-en/contact-hp/contact.html");
 
-        // Testing Crawler Features
-        runWebCrawler("https://uwaterloo.ca");
-        runHtmlToTextConverter();
-        runRegexExtractor();
+        // System.out.println("----- Final Extracted Data -----");
+        // result.forEach((key, value) -> System.out.println(key + ": " + value));
     }
+
 
     // -------------------- Laptop Recommendation Features --------------------
     public static Map<String, Integer> addSearchedWordCount(String word) {
@@ -76,6 +73,12 @@ public class Features {
     }
 
     // -------------------- Crawler Features --------------------
+    public static Map<String, String> crawlAndExtract(String url) {
+        runWebCrawler(url);
+        runHtmlToTextConverter();
+        return runRegexExtractor();  // Return the extracted patterns
+    }
+
     public static void runWebCrawler(String startUrl) {
         UWCrawler crawler = new UWCrawler();
         crawler.crawl(startUrl);
@@ -85,7 +88,9 @@ public class Features {
         HTMLtoTextConverter.main(new String[]{});
     }
 
-    public static void runRegexExtractor() {
-        RegexExtractor.main(new String[]{});
+    // ✅ Updated to return Map<String, String>
+    public static Map<String, String> runRegexExtractor() {
+        return RegexExtractor.extractAllMatches();
     }
+
 }

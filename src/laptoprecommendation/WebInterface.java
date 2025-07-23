@@ -23,7 +23,7 @@ import com.google.gson.JsonParser;
 public class WebInterface {
 
     public static void main(String[] args) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0); // Changed from 8080 to 8081
+        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0); 
         server.createContext("/WebApi", new ApiHandler());
         server.setExecutor(null);
         server.start();
@@ -101,6 +101,25 @@ public class WebInterface {
                             returnJsonObject.add("result", resultArray);
                         } catch (Exception e) {
                             sendError(exchange, 500, "Internal server error in WordCompletion");
+                            return;
+                        }
+                        break;
+
+                    case "crawlAndExtract":
+                        try {
+                            String url = jsonObject.get("url").getAsString();
+                            Map<String, String> extractedPatterns = Features.crawlAndExtract(url);
+
+                            JsonObject resultObject = new JsonObject();
+                            for (Map.Entry<String, String> entry : extractedPatterns.entrySet()) {
+                                resultObject.addProperty(entry.getKey(), entry.getValue());
+                            }
+
+                            returnJsonObject = new JsonObject();
+                            returnJsonObject.add("result", resultObject);
+
+                        } catch (Exception e) {
+                            sendError(exchange, 500, "Internal server error in crawlAndExtract");
                             return;
                         }
                         break;
