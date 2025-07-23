@@ -19,11 +19,11 @@ const ContactUs = () => {
 
   // Team members data
   const teamMembers = [
-    { id: 1, name: "Hasnain Mirza", photo: Hasnain_Mirza, linkedin: "https://www.linkedin.com/in/hasnain-mirza/" },
-    { id: 2, name: "Faseeh Qureshi", photo: Faseeh, linkedin: "https://www.linkedin.com/in/faseeh-qureshi/" },
+    { id: 1, name: "Hasnain Mirza", photo: Hasnain_Mirza, linkedin: "https://www.linkedin.com/in/hasnain-mirza79/" },
+    { id: 2, name: "Faseeh Qureshi", photo: Faseeh, linkedin: "https://www.linkedin.com/in/faseeh-u-rehman/" },
     { id: 3, name: "Jill Patel", photo: Jill, linkedin: "https://www.linkedin.com/in/jill-patel-7hb/" },
     { id: 4, name: "Kamraan Ahmed", photo: Kamraan, linkedin: "https://www.linkedin.com/in/kamraan-ahmed/" },
-    { id: 5, name: "Rohan", photo: Rohan, linkedin: "https://www.linkedin.com/in/rohan/" }
+    { id: 5, name: "Rohan", photo: Rohan, linkedin: "https://www.linkedin.com/in/rohan-here/" }
   ]
 
   const handleChange = (e) => {

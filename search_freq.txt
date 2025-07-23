@@ -1,5 +1,8 @@
 acer=6
-dell=2
-hp=1
+dell=3
+hp=2
 intel i5=1
+intel pentium processor=1
 laptop=6
+laptop 14-em0000ca with 12 months microsoft 365 personal=1
+lptp=1
