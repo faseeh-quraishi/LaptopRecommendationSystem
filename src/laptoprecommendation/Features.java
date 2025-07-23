@@ -22,14 +22,12 @@ public class Features {
     private static final SearchFreq sf = new SearchFreq();
 
     public static void main(String[] args) {
-        // Map<String, String> result = crawlAndExtract("https://www.hp.com/ca-en/contact-hp/contact.html");
+        Map<String, String> result = crawlAndExtract("https://www.hp.com/ca-en/shop/offer.aspx?p=contact-hp-store");
 
-        // System.out.println("----- Final Extracted Data -----");
-        // result.forEach((key, value) -> System.out.println(key + ": " + value));
+        System.out.println("----- Final Extracted Data -----");
+        result.forEach((key, value) -> System.out.println(key + ": " + value));
     }
 
-
-    // -------------------- Laptop Recommendation Features --------------------
     public static Map<String, Integer> addSearchedWordCount(String word) {
         return sf.addSearchedWordCount(word);
     }
@@ -75,8 +73,11 @@ public class Features {
     // -------------------- Crawler Features --------------------
     public static Map<String, String> crawlAndExtract(String url) {
         runWebCrawler(url);
-        runHtmlToTextConverter();
-        return runRegexExtractor();  // Return the extracted patterns
+
+        String domain = getDomainName(url); // extract domain like "uwaterloo.ca"
+
+        runHtmlToTextConverter(domain);     // only process HTMLs from this domain
+        return runRegexExtractor(domain);   // only extract from domain-specific text
     }
 
     public static void runWebCrawler(String startUrl) {
@@ -84,13 +85,19 @@ public class Features {
         crawler.crawl(startUrl);
     }
 
-    public static void runHtmlToTextConverter() {
-        HTMLtoTextConverter.main(new String[]{});
+    public static void runHtmlToTextConverter(String domain) {
+        HTMLtoTextConverter.convertDomain(domain);
     }
 
-    // ✅ Updated to return Map<String, String>
-    public static Map<String, String> runRegexExtractor() {
-        return RegexExtractor.extractAllMatches();
+    public static Map<String, String> runRegexExtractor(String domain) {
+        return RegexExtractor.extractMatchesForDomain(domain);
     }
 
+    private static String getDomainName(String url) {
+        try {
+            return new java.net.URI(url).getHost().replaceFirst("^www\\.", "");
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid URL: " + url);
+        }
+    }
 }

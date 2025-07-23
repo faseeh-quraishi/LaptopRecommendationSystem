@@ -4,28 +4,28 @@ import { useState } from "react"
 import "./CrawlerPage.css"
 
 const CrawlerPage = () => {
-  const allowedUrls = [
-    {
-      label: "ASUS Website",
-      value: "https://www.asus.com/ca-en/searchresult?searchType=products&searchKey=laptop&page=1"
-    },
-    {
-      label: "Apple Website",
-      value: "https://www.asus.com/ca-en/searchresult?searchType=products&searchKey=laptop&page=2"
-    },
-    {
-      label: "HP Website",
-      value: "https://www.asus.com/ca-en/searchresult?searchType=products&searchKey=laptop&page=3"
-    },
-    {
-      label: "Acer Website",
-      value: "https://www.acer.com/ca-en/laptops"
-    },
-    {
-      label: "Dell Website",
-      value: "https://www.asus.com/ca-en/searchresult?searchType=products&searchKey=zenbook&page=1"
-    }
-  ]
+const allowedUrls = [
+  {
+    label: "ASUS Website",
+    value: "https://www.asus.com/ca-en/support/contact"
+  },
+  {
+    label: "Apple Website",
+    value: "https://support.apple.com/en-ca/contact"
+  },
+  {
+    label: "HP Website",
+    value: "https://www.hp.com/ca-en/shop/offer.aspx?p=contact-hp-store"
+  },
+  {
+    label: "Acer Website",
+    value: "https://www.acer.com/ca-en/support/contact-us"
+  },
+  {
+    label: "Dell Website",
+    value: "https://www.dell.com/support/incidents-online/en-ca/contactus"
+  }
+]
 
   const [url, setUrl] = useState("")
   const [crawlResults, setCrawlResults] = useState(null)
@@ -43,18 +43,24 @@ const CrawlerPage = () => {
     setCrawlResults(null)
 
     try {
-      const response = await fetch("http://localhost:8080/crawlSite", {
+      const response = await fetch("http://localhost:8080/WebApi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({
+          method: "crawlAndExtract",
+          url: url
+        }),
       })
 
       const data = await response.json()
-      setCrawlResults(data)
 
-      if (response.ok && data) {
+      if (response.ok && data && data.result) {
+        setCrawlResults(data.result)
         setUrl("")
+      } else {
+        throw new Error("Invalid response from server.")
       }
+
     } catch (error) {
       console.error("Web crawling failed:", error)
       alert("Failed to crawl website. Please try again.")
@@ -96,7 +102,7 @@ const CrawlerPage = () => {
         {crawlResults && (
           <div className="results-container">
             <h3>Crawl Results</h3>
-            
+
             {/* Phone Numbers */}
             {crawlResults.Phone && (
               <div className="result-section">

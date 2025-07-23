@@ -5,62 +5,51 @@ import org.jsoup.nodes.Document;
 
 import java.io.*;
 
-/**
- * This program processes HTML files stored in the "saved_pages" folder.
- * It extracts readable text content using the Jsoup library and
- * generates corresponding plain text files inside the "text_pages" directory.
- */
 public class HTMLtoTextConverter {
 
-    // Folder containing the input HTML files
-    private static final String HTML_DIR = "saved_pages";
+    private static final String HTML_BASE_DIR = "saved_pages";
+    private static final String TEXT_BASE_DIR = "text_pages";
 
-    // Folder where the text output will be saved
-    private static final String TEXT_DIR = "text_pages";
+    /**
+     * Converts all HTML files related to the given domain (based on filename)
+     * into plain text and stores them in a domain-specific folder under text_pages/.
+     *
+     * @param domain The domain to filter and convert files for (e.g., "hp.com")
+     */
+    public static void convertDomain(String domain) {
+        System.out.println("🔍 Converting HTML files for domain: " + domain);
 
-    public static void main(String[] args) {
+        File htmlInputFolder = new File(HTML_BASE_DIR);
 
-        // Reference to the HTML input directory
-        File htmlInputFolder = new File(HTML_DIR);
+        File[] htmlFiles = htmlInputFolder.listFiles((dir, name) ->
+            name.toLowerCase().endsWith(".html") && name.contains(domain)
+        );
 
-        // Filter only files ending with .html extension
-        File[] htmlFiles = htmlInputFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".html"));
-
-        // If no HTML files found, exit the program
         if (htmlFiles == null || htmlFiles.length == 0) {
-            System.out.println("No HTML documents found in directory: " + HTML_DIR);
+            System.out.println("❌ No HTML files found for domain: " + domain);
             return;
         }
 
-        // Create the destination folder for text files if it doesn't already exist
-        File textOutputFolder = new File(TEXT_DIR);
-        if (!textOutputFolder.exists()) {
-            textOutputFolder.mkdir();
-        }
+        // Create domain-specific output folder for text files
+        File domainTextDir = new File(TEXT_BASE_DIR, domain);
+        if (!domainTextDir.exists()) domainTextDir.mkdirs();
 
-        // Loop through each HTML file for processing
         for (File htmlFile : htmlFiles) {
             try {
-                // Load the HTML file using Jsoup with UTF-8 encoding
                 Document doc = Jsoup.parse(htmlFile, "UTF-8");
+                String text = doc.text();
 
-                // Extract all the visible text content from the HTML structure
-                String extractedText = doc.text();
-
-                // Prepare the output file name by changing the extension to .txt
                 String textFileName = htmlFile.getName().replace(".html", ".txt");
-                File textFile = new File(textOutputFolder, textFileName);
+                File textFile = new File(domainTextDir, textFileName);
 
-                // Write the plain text content into the new file
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(textFile))) {
-                    writer.write(extractedText);
+                    writer.write(text);
                 }
 
-                // Log the output path to the console
-                System.out.println("Text extracted and saved to: " + textFile.getAbsolutePath());
+                System.out.println("✅ Converted: " + textFile.getAbsolutePath());
 
             } catch (IOException e) {
-                System.err.println("Failed to convert " + htmlFile.getName() + ": " + e.getMessage());
+                System.err.println("⚠️ Failed to convert " + htmlFile.getName() + ": " + e.getMessage());
             }
         }
     }

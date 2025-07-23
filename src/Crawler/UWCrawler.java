@@ -8,7 +8,8 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -18,7 +19,7 @@ import java.util.Set;
 public class UWCrawler {
 
     private static final String SAVE_DIRECTORY = "saved_pages";
-    private static final int MAX_PAGES = 30;
+    private static final int MAX_PAGES = 100;
 
     private Set<String> visitedPages = new HashSet<>();
     private Queue<String> pagesToVisit = new LinkedList<>();
@@ -105,10 +106,12 @@ public class UWCrawler {
     }
 
     private String getDomainName(String url) {
+        if (url == null || url.isEmpty()) return null;
         try {
-            URL link = new URL(url);
-            return link.getHost();
-        } catch (Exception e) {
+            URI uri = new URI(url.trim());
+            String host = uri.getHost();
+            return (host != null && host.startsWith("www.")) ? host.substring(4) : host;
+        } catch (URISyntaxException e) {
             return null;
         }
     }
