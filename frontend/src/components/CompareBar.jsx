@@ -6,7 +6,7 @@ const CompareBar = ({ compareList, onCompare, onRemove }) => {
       <div className="compare-items">
         {compareList.map((laptop) => (
           <div key={laptop.id} className="compare-item">
-            <span>{laptop.name}</span>
+            <span>{laptop.brandName} {laptop.product}</span>
             <button className="remove-compare" onClick={() => onRemove(laptop)}>
               ×
             </button>
