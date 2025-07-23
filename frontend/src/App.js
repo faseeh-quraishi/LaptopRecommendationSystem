@@ -49,6 +49,17 @@ function App() {
   const [showContactModal, setShowContactModal] = useState(false)
   const [showCrawlerModal, setShowCrawlerModal] = useState(false)
 
+  useEffect(() => {
+    if (showContactModal) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [showContactModal]);
+
   // Trigger search only when filters or sortBy change (not searchQuery)
   useEffect(() => {
     const hasActiveFilters = Object.values(filters).some((f) =>
@@ -144,16 +155,16 @@ function App() {
 
   return (
     <div className="app">
-      <div className="group-section">
-        <div className="group-container">
-          <h3>Group-4 AlgoAllies</h3>
-          <p>Your Ultimate Laptop Search Tool</p>
+      <div className="header-row">
+        <div className="group-title">
+          <h3 className="group-link" onClick={() => setShowContactModal(true)} style={{cursor: 'pointer'}}>
+            Group-4 AlgoAllies
+          </h3>
+        </div>
+        <div className="main-title">
+          <h1>Laptop Recommendation System</h1>
         </div>
       </div>
-
-      <header className="app-header">
-        <h1>Laptop Recommendation System</h1>
-      </header>
 
       <main className="app-main">
         <div className="search-section">
@@ -167,11 +178,43 @@ function App() {
             filters={filters}
             onFiltersChange={setFilters}
             onClearFilters={clearFilters}
-            searchFrequency={searchFrequency}
-            wordFrequency={wordFrequency}
           />
 
-          {hasSearched && <SortDropdown value={sortBy} onChange={setSortBy} />}
+          {hasSearched && (
+            <div className="sort-and-frequency-row">
+              <SortDropdown value={sortBy} onChange={setSortBy} />
+              {Object.keys(searchFrequency).length > 0 && (
+                <div className="frequency-group">
+                  <div className="frequency-display">
+                    <div className="frequency-section">
+                      <h4>Search Frequency:</h4>
+                      <div className="frequency-items">
+                        {Object.entries(searchFrequency)
+                          .slice(0, 5)
+                          .map(([term, count]) => (
+                            <span key={term} className="frequency-item">
+                              {term}: {count}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                    <div className="frequency-section">
+                      <h4>Word Frequency:</h4>
+                      <div className="frequency-items">
+                        {Object.entries(wordFrequency)
+                          .slice(0, 5)
+                          .map(([word, count]) => (
+                            <span key={word} className="frequency-item">
+                              {word}: {count}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {!hasSearched ? (

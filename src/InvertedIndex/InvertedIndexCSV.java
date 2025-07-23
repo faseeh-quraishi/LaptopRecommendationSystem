@@ -31,7 +31,7 @@ public class InvertedIndexCSV {
         while ((line = br.readLine()) != null) {
             String[] parts = line.split(","); // CSV columns
             for (String field : parts) {
-                String[] words = field.split("[^a-zA-Z]+"); // Remove punctuation, split by non-letters
+                String[] words = field.split("[^a-zA-Z0-9]+"); // Remove punctuation, split by non-alphanumeric
                 for (String word : words) {
                     if (!word.isEmpty()) {
                         insert(word, row);
@@ -92,7 +92,7 @@ public class InvertedIndexCSV {
 
             // Split query into individual words (e.g., "Apple Macbook" → ["Apple",
             // "Macbook"])
-            String[] words = query.split("[^a-zA-Z]+");
+            String[] words = query.split("[^a-zA-Z0-9]+");
 
             Set<Integer> result = null;
             for (String word : words) {

@@ -1,4 +1,5 @@
-acer=1
+acer=6
 dell=2
 hp=1
+intel i5=1
 laptop=6

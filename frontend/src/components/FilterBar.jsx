@@ -104,40 +104,12 @@ const FilterBar = ({ filters, onFiltersChange, onClearFilters, searchFrequency, 
           </div>
         </div>
         <div className="filter-actions-row">
-          <button className="apply-filters-btn">Apply Filters</button>
           <button className="clear-filters-btn" onClick={onClearFilters}>
             Clear Filters
           </button>
         </div>
       </div>
-      {Object.keys(searchFrequency).length > 0 && (
-        <div className="frequency-display">
-          <div className="frequency-section">
-            <h4>Search Frequency:</h4>
-            <div className="frequency-items">
-              {Object.entries(searchFrequency)
-                .slice(0, 5)
-                .map(([term, count]) => (
-                  <span key={term} className="frequency-item">
-                    {term}: {count}
-                  </span>
-                ))}
-            </div>
-          </div>
-          <div className="frequency-section">
-            <h4>Word Frequency:</h4>
-            <div className="frequency-items">
-              {Object.entries(wordFrequency)
-                .slice(0, 5)
-                .map(([word, count]) => (
-                  <span key={word} className="frequency-item">
-                    {word}: {count}
-                  </span>
-                ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Frequency display removed from here; now handled in App.js */}
     </>
   )
 }
