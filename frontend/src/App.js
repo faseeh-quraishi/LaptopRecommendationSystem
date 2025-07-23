@@ -10,6 +10,10 @@ import CompareBar from "./components/CompareBar"
 import CompareModal from "./components/CompareModal"
 import Pagination from "./components/Pagination"
 import { searchLaptops, getSearchFrequency, getWordFrequency } from "./api/laptopService"
+
+import ContactUs from "./components/ContactUs"
+import CrawlerPage from "./components/CrawlerPage"
+
 import "./App.css"
 
 function App() {
@@ -42,25 +46,28 @@ function App() {
     hasPrevPage: false,
   })
 
+  const [showContactModal, setShowContactModal] = useState(false)
+  const [showCrawlerModal, setShowCrawlerModal] = useState(false)
+
+  // Trigger search only when filters or sortBy change (not searchQuery)
   useEffect(() => {
-    if (
-      searchQuery ||
-      Object.values(filters).some((f) => (Array.isArray(f) ? f.length > 0 : f !== filters.priceRange))
-    ) {
-      setCurrentPage(1) // Reset to first page when filters change
+    const hasActiveFilters = Object.values(filters).some((f) =>
+      Array.isArray(f) ? f.length > 0 : f !== filters.priceRange
+    )
+
+    if (hasActiveFilters || sortBy) {
+      setCurrentPage(1)
       handleSearch(1)
     }
-  }, [searchQuery, filters, sortBy])
+  }, [filters, sortBy]) // ✅ removed searchQuery here
 
   const handleSearch = async (page = 1) => {
     setLoading(true)
     setHasSearched(true)
 
     try {
-      // API call with pagination parameters
       const response = await searchLaptops(searchQuery, filters, sortBy, page, 12)
 
-      // Assign unique id using index for each laptop to fix compare issue
       const laptopsWithIds = response.laptops.map((laptop, index) => ({
         ...laptop,
         id: index,
@@ -71,7 +78,6 @@ function App() {
       setPagination(response.pagination)
       setCurrentPage(page)
 
-      // Fetch frequency data (only on first page to avoid unnecessary calls)
       if (page === 1) {
         const searchFreq = await getSearchFrequency()
         setSearchFrequency(searchFreq)
@@ -133,13 +139,11 @@ function App() {
 
   const handlePageChange = (page) => {
     handleSearch(page)
-    // Scroll to top when page changes
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
   return (
     <div className="app">
-
       <div className="group-section">
         <div className="group-container">
           <h3>Group-4 AlgoAllies</h3>
@@ -156,7 +160,7 @@ function App() {
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
-            onSearch={() => handleSearch(1)} // Called when user presses Enter
+            onSearch={() => handleSearch(1)} // Only triggers on Enter now
           />
 
           <FilterBar
@@ -186,7 +190,7 @@ function App() {
             onCompareToggle={handleCompareToggle}
             compareList={compareList}
             pagination={pagination}
-            searchQuery={searchQuery} // ✅ Correct
+            searchQuery={searchQuery}
           />
         )}
 
@@ -208,6 +212,46 @@ function App() {
           onRemove={handleCompareToggle}
         />
       )}
+
+      {/* For regex Validation
+      <ContactUs />
+      <CrawlerPage /> */}
+
+      {/* Action Buttons */}
+      <div className="action-buttons">
+        <button className="action-btn contact-btn" onClick={() => setShowContactModal(true)}>
+          Contact Us
+        </button>
+        <button className="action-btn crawler-btn" onClick={() => setShowCrawlerModal(true)}>
+          Web Crawler
+        </button>
+      </div>
+
+      {/* Contact Us Modal */}
+      {showContactModal && (
+        <div className="modal-backdrop" onClick={(e) => e.target === e.currentTarget && setShowContactModal(false)}>
+          <div className="modal-content contact-modal">
+            <button className="modal-close" onClick={() => setShowContactModal(false)}>
+              ×
+            </button>
+            <ContactUs />
+          </div>
+        </div>
+      )}
+
+      {/* Web Crawler Modal */}
+      {showCrawlerModal && (
+        <div className="modal-backdrop" onClick={(e) => e.target === e.currentTarget && setShowCrawlerModal(false)}>
+          <div className="modal-content crawler-modal">
+            <button className="modal-close" onClick={() => setShowCrawlerModal(false)}>
+              ×
+            </button>
+            <CrawlerPage />
+          </div>
+        </div>
+      )}
+
+
 
       {showCompareModal && <CompareModal laptops={compareList} onClose={() => setShowCompareModal(false)} />}
     </div>

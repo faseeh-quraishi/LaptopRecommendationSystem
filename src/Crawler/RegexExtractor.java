@@ -13,8 +13,9 @@ public class RegexExtractor {
     );
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
-        "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
-    );
+            "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}",
+            Pattern.CASE_INSENSITIVE
+        );
 
     private static final Pattern URL_PATTERN = Pattern.compile(
         "https?://\\S+"
