@@ -1,14 +1,18 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { getAutocompleteSuggestions, spellCheckQuery } from "../api/laptopService"
-import { increaseSearchFrequencyCount } from "../api/laptopService"
-import { getWordFrequency } from "../api/laptopService"; // make sure it's imported
+import {
+  getAutocompleteSuggestions,
+  spellCheckQuery,
+  increaseSearchFrequencyCount,
+  getWordFrequency
+} from "../api/laptopService"
 
 const SearchBar = ({ value, onChange, onSearch }) => {
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [spellSuggestions, setSpellSuggestions] = useState([])
+  const [spellSuggestionMap, setSpellSuggestionMap] = useState({})
   const [spellError, setSpellError] = useState("")
 
   useEffect(() => {
@@ -43,56 +47,86 @@ const SearchBar = ({ value, onChange, onSearch }) => {
     return () => clearTimeout(debounceTimer)
   }, [value])
 
-  const handleSuggestionClick = (suggestion) => {
-    onChange(suggestion)
-    setShowSuggestions(false)
-    setSpellSuggestions([])
-    setSpellError("")
+  const processSearch = async (inputValue = value) => {
+    try {
+      const result = await spellCheckQuery(inputValue)
+
+      if (
+        result.length === 1 &&
+        typeof result[0] === "string" &&
+        result[0].toLowerCase().startsWith("error:")
+      ) {
+        setSpellSuggestions([])
+        setSpellSuggestionMap({})
+        setSpellError(result[0].slice(6).trim())
+      } else if (result.length > 0) {
+        const suggestionMap = {}
+        const suggestionsList = []
+
+        result.forEach(entry => {
+          if (typeof entry === "string" && entry.includes(":")) {
+            const [misspelled, suggestions] = entry.split(":")
+            const words = suggestions
+              .split(",")
+              .map(w => w.trim())
+              .filter(Boolean)
+
+            suggestionMap[misspelled.trim()] = words
+            suggestionsList.push(
+              ...words.map(w => ({
+                word: w,
+                replaces: misspelled.trim()
+              }))
+            )
+          }
+        })
+
+        setSpellSuggestionMap(suggestionMap)
+        setSpellSuggestions(suggestionsList)
+        setSpellError("")
+      } else {
+        setSpellSuggestions([])
+        setSpellSuggestionMap({})
+      }
+
+      setShowSuggestions(false)
+
+      if (onSearch) {
+        onSearch(inputValue) // ✅ pass updated value to parent
+      }
+
+      const trimmedValue = inputValue.toLowerCase().trim()
+      await increaseSearchFrequencyCount(trimmedValue)
+      const freq = await getWordFrequency(trimmedValue)
+      console.log("🔢 Word frequency result:", freq)
+    } catch (err) {
+      console.error("Spell check or frequency failed:", err)
+      setSpellError("Something went wrong during spell check.")
+      setSpellSuggestions([])
+      setSpellSuggestionMap({})
+    }
+  }
+
+  const handleSuggestionClick = async (suggestion) => {
+    let updatedValue = value
+
+    if (typeof suggestion === "string") {
+      updatedValue = suggestion
+    } else if (typeof suggestion === "object" && suggestion.word && suggestion.replaces) {
+      const { word: replacement, replaces } = suggestion
+      const regex = new RegExp(`\\b${replaces}\\b`, "gi")
+      updatedValue = value.replace(regex, replacement)
+    }
+
+    onChange(updatedValue)
+    await processSearch(updatedValue)
   }
 
   const handleKeyDown = async (e) => {
     if (e.key === "Enter") {
-      try {
-        const result = await spellCheckQuery(value);
-
-        if (
-          result.length === 1 &&
-          typeof result[0] === "string" &&
-          result[0].toLowerCase().startsWith("error:")
-        ) {
-          setSpellSuggestions([]);
-          setSpellError(result[0].slice(6).trim());
-        } else if (result.length > 0) {
-          setSpellSuggestions(result);
-          setSpellError("");
-        } else {
-          setSpellSuggestions([]);
-        }
-
-        setShowSuggestions(false);
-
-        // ✅ Call parent search handler
-        if (onSearch) {
-          onSearch();
-        }
-
-        const trimmedValue = value.toLowerCase().trim();
-
-        // ✅ Increase frequency count
-        await increaseSearchFrequencyCount(trimmedValue);
-
-        // ✅ Get word frequency
-        const freq = await getWordFrequency(trimmedValue);
-        console.log("🔢 Word frequency result:", freq);
-        
-      } catch (err) {
-        console.error("Spell check or frequency failed:", err);
-        setSpellError("Something went wrong during spell check.");
-        setSpellSuggestions([]);
-      }
+      await processSearch()
     }
-  };
-
+  }
 
   return (
     <div className="search-bar">
@@ -103,9 +137,10 @@ const SearchBar = ({ value, onChange, onSearch }) => {
           value={value}
           onChange={(e) => {
             const input = e.target.value
-            const validInput = input.replace(/[^a-zA-Z0-9 ]/g, "") // sanitize input
+            const validInput = input.replace(/[^a-zA-Z0-9 ]/g, "")
             onChange(validInput)
             setSpellSuggestions([])
+            setSpellSuggestionMap({})
             setSpellError("")
           }}
           onKeyDown={handleKeyDown}
@@ -136,9 +171,9 @@ const SearchBar = ({ value, onChange, onSearch }) => {
         <div className="spellcheck-suggestions">
           <p>Did you mean:</p>
           <div className="suggestion-items">
-            {spellSuggestions.map((word, index) => (
-              <button key={index} onClick={() => handleSuggestionClick(word)}>
-                {word}
+            {spellSuggestions.map((s, index) => (
+              <button key={index} onClick={() => handleSuggestionClick(s)}>
+                {s.word} <small>(for "{s.replaces}")</small>
               </button>
             ))}
           </div>

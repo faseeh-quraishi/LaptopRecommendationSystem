@@ -46,25 +46,22 @@ public class SpellCheckingMainClass {
             outputMessages.add("error: Please provide a non-empty word.");
             return outputMessages;
         }
-
-        if (spellChecker.isCorrect(word)) {
-//            outputMessages.add("✅ The word '" + word + "' is spelled correctly.");
-        } else {
-//            outputMessages.add("❌ The word '" + word + "' is not in the vocabulary.");
-
-            List<String> suggestions = spellChecker.suggest(word, 2);
-            if (suggestions.isEmpty()) {
-                outputMessages.add("error: No suggestions found.");
+        for(String unitWord : word.split(" ")) {
+            if (spellChecker.isCorrect(unitWord)) {
             } else {
-//                outputMessages.add("");
-                for (int i = 0; i < Math.min(5, suggestions.size()); i++) {
-                    outputMessages.add(suggestions.get(i));
+                List<String> suggestions = spellChecker.suggest(unitWord, 3);
+                String tempSuggestions = unitWord+": ";
+                if (suggestions.isEmpty()) {
+                    outputMessages.add("error:  The word " + unitWord + " is not in the vocabulary.");
+                    break;
+                } else {
+                    for (int i = 0; i < Math.min(5, suggestions.size()); i++) {
+                        tempSuggestions += suggestions.get(i) + ",";
+                    }
                 }
+                outputMessages.add(tempSuggestions.substring(0, tempSuggestions.length() - 1));
             }
         }
-
         return outputMessages;
     }
-
-    // Main method not required here anymore
 }

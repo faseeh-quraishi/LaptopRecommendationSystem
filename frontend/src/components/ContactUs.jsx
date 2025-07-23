@@ -8,7 +8,7 @@ import Kamraan from '../teamphotos/Kamraan.jpeg'
 import Rohan from '../teamphotos/Rohan.jpeg'
 
 const nameRegex = /^[A-Za-z ]{2,25}$/;
-const emailRegex = /^[\w.-]+@[\w.-]+\.[A-Za-z]{2,}$/;
+const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i;
 const phoneRegex = /^(\(\d{3}\)|\d{3})[\s-]?\d{3}[\s-]?\d{4}$/;
 
 const ContactUs = () => {
@@ -22,7 +22,7 @@ const ContactUs = () => {
     { id: 1, name: "Hasnain Mirza", photo: Hasnain_Mirza, linkedin: "https://www.linkedin.com/in/hasnain-mirza79/" },
     { id: 2, name: "Faseeh Qureshi", photo: Faseeh, linkedin: "https://www.linkedin.com/in/faseeh-u-rehman/" },
     { id: 3, name: "Jill Patel", photo: Jill, linkedin: "https://www.linkedin.com/in/jill-patel-7hb/" },
-    { id: 4, name: "Kamraan Ahmed", photo: Kamraan, linkedin: "https://www.linkedin.com/in/kamraan-ahmed/" },
+    { id: 4, name: "Kamraan Ahmed", photo: Kamraan, linkedin: "https://www.linkedin.com/in/kamraan-ahmed-09b1962b6/" },
     { id: 5, name: "Rohan", photo: Rohan, linkedin: "https://www.linkedin.com/in/rohan-here/" }
   ]
 
@@ -39,7 +39,7 @@ const ContactUs = () => {
       errors.push("Error in email: Invalid email format.")
     }
     if (!phoneRegex.test(formData.phone.trim())) {
-      errors.push("Error in phone: Must be 10 digits (North American format).")
+      errors.push("Error in phone: (Canadian format).")
     }
     return errors
   }
