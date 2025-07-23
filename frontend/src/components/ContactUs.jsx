@@ -2,7 +2,7 @@
 import { useState } from "react"
 import "./ContactUs.css"
 import Hasnain_Mirza from '../teamphotos/Hasnain_Mirza.jpeg'
-// import Faseeh from '../teamphotos/Faseeh.jpeg'
+import Faseeh from '../teamphotos/Faseeh.jpg'
 import Jill from '../teamphotos/Jill.jpeg'
 import Kamraan from '../teamphotos/Kamraan.jpeg'
 import Rohan from '../teamphotos/Rohan.jpeg'
@@ -22,7 +22,7 @@ const ContactUs = () => {
     {
       id: 2,
       name: "Faseeh Qureshi",
-      photo: ""
+      photo: Faseeh
     },
     {
       id: 3,

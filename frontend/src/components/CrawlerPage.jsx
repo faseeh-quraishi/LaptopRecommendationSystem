@@ -7,11 +7,11 @@ const CrawlerPage = () => {
 const allowedUrls = [
   {
     label: "ASUS Website",
-    value: "https://www.asus.com/ca-en/support/contact"
+    value: "https://www.asus.com/ca-en/support/callus/"
   },
   {
     label: "Apple Website",
-    value: "https://support.apple.com/en-ca/contact"
+    value: "https://www.apple.com/ca/contact/"
   },
   {
     label: "HP Website",
@@ -19,11 +19,11 @@ const allowedUrls = [
   },
   {
     label: "Acer Website",
-    value: "https://www.acer.com/ca-en/support/contact-us"
+    value: "https://acer.pissedconsumer.com/customer-service.html"
   },
   {
     label: "Dell Website",
-    value: "https://www.dell.com/support/incidents-online/en-ca/contactus"
+    value: "https://www.dell.com/en-ca/lp/contact-us"
   }
 ]
 
@@ -77,6 +77,7 @@ const allowedUrls = [
   return (
     <div className="crawler-container">
       <h2>Website Crawler</h2>
+      <p>Contact information from official site</p>
       <form onSubmit={handleSubmit} className="crawler-form">
         <select value={url} onChange={(e) => setUrl(e.target.value)} disabled={loading}>
           <option value="">Select Website</option>
