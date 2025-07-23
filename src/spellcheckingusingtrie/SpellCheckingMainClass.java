@@ -49,7 +49,7 @@ public class SpellCheckingMainClass {
         for(String unitWord : word.split(" ")) {
             if (spellChecker.isCorrect(unitWord)) {
             } else {
-                List<String> suggestions = spellChecker.suggest(unitWord, 3);
+                List<String> suggestions = spellChecker.suggest(unitWord, 2);
                 String tempSuggestions = unitWord+": ";
                 if (suggestions.isEmpty()) {
                     outputMessages.add("error:  The word " + unitWord + " is not in the vocabulary.");
